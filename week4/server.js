@@ -3,7 +3,9 @@ const http = require("http")
 const AppDataSource = require("./db")
 const {
   creditPackageValidator,
-  deletePackageValidator
+  createCoachesSkillValidator,
+  deletePackageValidator,
+  deleteSkillValidator
 } = require("./validation")
 
 const requestListener = async (req, res) => {
@@ -43,7 +45,7 @@ const requestListener = async (req, res) => {
     req.on("end",async()=>{
       try { 
         // 檢核 body
-        const bodyData = JSON.parse(body) || {}
+        const bodyData = body?JSON.parse(body): {}
         creditPackageValidator(bodyData)
 
         // get datasource insert
@@ -100,7 +102,7 @@ const requestListener = async (req, res) => {
     })
     
   } 
-  // 刪除購買方案
+  // Delete-刪除購買方案
   else if (req.url.startsWith("/api/credit-package/") && req.method === "DELETE") {
     try {
       const targetId = req.url.split('/').pop()
@@ -151,7 +153,142 @@ const requestListener = async (req, res) => {
     } finally {
       res.end()
     }
-  } else if (req.method === "OPTIONS") {
+  } 
+  // Get-取得教練專長
+  else if (req.url === "/api/coaches/skill" && req.method === "GET") {
+
+      try {
+        const allData = await AppDataSource.getRepository('SKILL').find()
+        res.writeHead(200, headers)
+        res.write(JSON.stringify({
+          status: "success",
+          data: allData
+        }))
+      } catch(err) {
+        res.writeHead(500, headers)
+        res.write(JSON.stringify({
+          status: "error",
+          message: "伺服器錯誤"
+        }))
+      } finally {
+        res.end()
+      }
+  }
+   // POST-新增教練技能
+   else if (req.url === "/api/coaches/skill" && req.method === "POST") {
+    req.on("end",async()=>{
+      try { 
+        // 檢核 body
+  
+        const bodyData = body?JSON.parse(body): {}
+        createCoachesSkillValidator(bodyData)
+
+        // get datasource insert
+        const {name} = bodyData
+        const skillTable = await AppDataSource.getRepository('SKILL')
+
+        // 檢核package 名稱
+        const hasSameSkill=  await skillTable.findOne({
+          where: {name}
+        })
+     
+        if (!hasSameSkill) {
+          const result = await skillTable.insert({
+            name: name,
+          })
+        
+          res.writeHead(200, headers)
+          res.write(JSON.stringify({
+            status: "新增成功",
+            data: result
+          }))
+        } else {
+          throw new Error('repeat_name')
+        }
+       
+      } catch (err) {
+        console.log('err',err)
+        if (err.name === "ZodError") {
+          res.writeHead(403, headers)
+          res.write(JSON.stringify({
+            status: "failed",
+            message: "欄位未填寫正確",
+          }))
+        } 
+        else if (err.message == 'repeat_name') {
+          res.writeHead(409, headers)
+          res.write(JSON.stringify({
+            status: "failed",
+            message: "資料重複",
+          }))
+        }
+        else {
+          res.writeHead(500, headers)
+          res.write(JSON.stringify({
+            status: "error",
+            message: "伺服器錯誤"
+          }))
+        } 
+      } finally {
+        res.end()
+      }
+       
+    })
+    
+  } 
+  // Delete-刪除教練技能
+  else if (req.url.startsWith("/api/coaches/skill") && req.method === "DELETE") {
+    try {
+      const targetId = req.url.split('/').pop()
+      // id 格式檢核
+      deletePackageValidator({id:targetId})
+ 
+      const skillTable = await AppDataSource.getRepository('SKILL')
+      // 查找id 
+      const findIdResult = await skillTable.findOne({
+        where: {id: targetId}
+      })
+  
+      if (findIdResult) {
+        const result = await skillTable.delete({
+          id: targetId
+        })
+        res.writeHead(200, headers)
+        res.write(JSON.stringify({
+          status: "刪除成功",
+          data: result
+        }))
+      } else {
+        throw new Error('id_not_found')
+      }
+    } catch (err) {
+      if (err.message === 'id_not_found') {
+        res.writeHead(400, headers)
+        res.write(JSON.stringify({
+          status: "failed",
+          message: "ID錯誤"
+        }))
+
+      }
+      else if (err.name === "ZodError") {
+        res.writeHead(403, headers)
+        res.write(JSON.stringify({
+          status: "failed",
+          message: "id未填寫正確",
+        }))
+      }  
+      else {
+        res.writeHead(500, headers)
+        res.write(JSON.stringify({
+          status: "error",
+          message: "伺服器錯誤"
+        }))
+      }
+    } finally {
+      res.end()
+    }
+  } 
+  else if (req.method === "OPTIONS") {
     res.writeHead(200, headers)
     res.end()
   } else {
@@ -163,6 +300,7 @@ const requestListener = async (req, res) => {
     res.end()
   }
 }
+
 
 const server = http.createServer(requestListener)
 
