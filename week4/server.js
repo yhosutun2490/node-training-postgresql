@@ -120,13 +120,13 @@ const requestListener = async (req, res) => {
       if (result.affected) {
         res.writeHead(200, headers)
         res.write(JSON.stringify({
-          status: "刪除成功",
+          status: "success",
           data: result
         }))
       } else {
         throw new Error('id_not_found')
       }
-      
+
     } catch (err) {
       if (err.message === 'id_not_found') {
         res.writeHead(400, headers)
@@ -251,8 +251,7 @@ const requestListener = async (req, res) => {
       if (result.affected) {
         res.writeHead(200, headers)
         res.write(JSON.stringify({
-          status: "刪除成功",
-          data: result
+          status: "success",
         }))
       } else {
         throw new Error('id_not_found')
