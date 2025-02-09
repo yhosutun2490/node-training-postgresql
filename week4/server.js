@@ -19,7 +19,7 @@ const requestListener = async (req, res) => {
   req.on("data", (chunk) => {
     body += chunk
   })
-
+  // GET-取得課程購買方案
   if (req.url === "/api/credit-package" && req.method === "GET") {
 
     try {
@@ -170,8 +170,8 @@ const requestListener = async (req, res) => {
         res.end()
       }
   }
-   // POST-新增教練技能
-   else if (req.url === "/api/coaches/skill" && req.method === "POST") {
+  // POST-新增教練技能
+  else if (req.url === "/api/coaches/skill" && req.method === "POST") {
     req.on("end",async()=>{
       try { 
         // 檢核 body
@@ -279,7 +279,8 @@ const requestListener = async (req, res) => {
     } finally {
       res.end()
     }
-  } 
+  }
+  // Preflight API
   else if (req.method === "OPTIONS") {
     res.writeHead(200, headers)
     res.end()
