@@ -108,11 +108,7 @@ const requestListener = async (req, res) => {
       const targetId = req.url.split('/').pop()
       // id 格式檢核
       deletePackageValidator({id:targetId})
- 
       const packageTable = await AppDataSource.getRepository('CREDIT_PACKAGE')
-    
-  
-      
       const result = await packageTable.delete({
         id: targetId
       })
