@@ -110,15 +110,14 @@ const requestListener = async (req, res) => {
       deletePackageValidator({id:targetId})
  
       const packageTable = await AppDataSource.getRepository('CREDIT_PACKAGE')
-      // 查找id 
-      const findIdResult = await packageTable.findOne({
-        where: {id: targetId}
-      })
+    
   
-      if (findIdResult) {
-        const result = await packageTable.delete({
-          id: targetId
-        })
+      
+      const result = await packageTable.delete({
+        id: targetId
+      })
+
+      if (result.affected) {
         res.writeHead(200, headers)
         res.write(JSON.stringify({
           status: "刪除成功",
@@ -127,6 +126,7 @@ const requestListener = async (req, res) => {
       } else {
         throw new Error('id_not_found')
       }
+      
     } catch (err) {
       if (err.message === 'id_not_found') {
         res.writeHead(400, headers)
@@ -241,18 +241,14 @@ const requestListener = async (req, res) => {
     try {
       const targetId = req.url.split('/').pop()
       // id 格式檢核
-      deletePackageValidator({id:targetId})
+      deleteSkillValidator({id:targetId})
  
       const skillTable = await AppDataSource.getRepository('SKILL')
-      // 查找id 
-      const findIdResult = await skillTable.findOne({
-        where: {id: targetId}
-      })
   
-      if (findIdResult) {
-        const result = await skillTable.delete({
+      const result = await skillTable.delete({
           id: targetId
-        })
+      })
+      if (result.affected) {
         res.writeHead(200, headers)
         res.write(JSON.stringify({
           status: "刪除成功",
@@ -261,6 +257,7 @@ const requestListener = async (req, res) => {
       } else {
         throw new Error('id_not_found')
       }
+     
     } catch (err) {
       if (err.message === 'id_not_found') {
         res.writeHead(400, headers)
