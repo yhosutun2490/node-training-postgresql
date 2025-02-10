@@ -23,7 +23,9 @@ const requestListener = async (req, res) => {
   if (req.url === "/api/credit-package" && req.method === "GET") {
 
     try {
-      const allData = await AppDataSource.getRepository('CREDIT_PACKAGE').find()
+      const allData = await AppDataSource.getRepository('CREDIT_PACKAGE').find({
+        select: ['id','name','credit_amount','price']
+      })
       res.writeHead(200, headers)
       res.write(JSON.stringify({
         status: "success",
@@ -154,7 +156,9 @@ const requestListener = async (req, res) => {
   else if (req.url === "/api/coaches/skill" && req.method === "GET") {
 
       try {
-        const allData = await AppDataSource.getRepository('SKILL').find()
+        const allData = await AppDataSource.getRepository('SKILL').find({
+          select: ['id','name']
+        })
         res.writeHead(200, headers)
         res.write(JSON.stringify({
           status: "success",
