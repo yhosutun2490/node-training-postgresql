@@ -1,4 +1,4 @@
-const {z}  = require('zod')
+const {z}  = require('zod');
 
 // 定義請求參數的 Zod Schema
 function creditPackageValidator (body) {
@@ -54,9 +54,11 @@ function deleteSkillValidator(params) {
     return rules.parse(params)
 }
 
+
+
 module.exports = {
   creditPackageValidator,
   deletePackageValidator,
   createCoachesSkillValidator,
-  deleteSkillValidator
+  deleteSkillValidator,
 }

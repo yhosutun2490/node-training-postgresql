@@ -26,11 +26,11 @@ function customErrorResponse(res,status,message) {
 /**
  * 200 成功回應
  * @param {object} res  res物件 
- * @param {*} data 回傳資料
- * @param {*} message 回傳訊息
+ * @param {object} data 回傳資料
+ * @param {number} status 預設status code 200
  */
-function successResponse(res,data) {
-    return res.status(200).json({
+function successResponse(res,data,status=200) {
+    return res.status(status).json({
         status: 'success',
         data
     })
