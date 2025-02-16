@@ -2,21 +2,20 @@ const express = require("express");
 
 const router = express.Router();
 const { dataSource } = require("../db/data-source");
-const logger = require("../utils/logger")("CreditPackage");
+const logger = require("../utils/logger")("CoachSkill");
 const {
-  creditPackageValidator,
-  deletePackageValidator,
+  createCoachesSkillValidator,
+  deleteSkillValidator,
 } = require("../validation/validation");
 const {
   successResponse,
-  customErrorResponse,
   serverErrorResponse,
 } = require("../middlewares/responseHandler");
 
 router.get("/", async (req, res, next) => {
   try {
-    const data = await dataSource.getRepository("CREDIT_PACKAGE").find({
-      select: ["id", "name", "credit_amount", "price"],
+    const data = await dataSource.getRepository("Coach_Skill").find({
+      select: ["id", "name"],
     });
     successResponse(res, data);
   } catch (err) {
@@ -29,22 +28,20 @@ router.post("/", async (req, res, next) => {
   try {
     // 檢核 body
     const bodyData = req.body;
-    creditPackageValidator(bodyData);
+    createCoachesSkillValidator(bodyData);
 
     // get datasource insert
-    const { name, credit_amount, price } = bodyData;
-    const packageTable = await dataSource.getRepository("CREDIT_PACKAGE");
+    const { name } = bodyData;
+    const skillTable = await dataSource.getRepository("Coach_Skill");
 
     // 檢核package 名稱
-    const hasSamePackageName = await packageTable.findOne({
+    const hasSameSkillName = await skillTable.findOne({
       where: { name },
     });
 
-    if (!hasSamePackageName) {
-      const result = await packageTable.insert({
+    if (!hasSameSkillName) {
+      const result = await skillTable.insert({
         name: name,
-        credit_amount: credit_amount,
-        price: price,
       });
       const createId = result.identifiers[0]?.id;
       successResponse(res, {
@@ -69,9 +66,9 @@ router.delete("/:id", async (req, res, next) => {
   try {
     const targetId = req.params?.id;
     // id 格式檢核
-    deletePackageValidator({ id: targetId });
-    const packageTable = await dataSource.getRepository("CREDIT_PACKAGE");
-    const result = await packageTable.delete({
+    deleteSkillValidator({ id: targetId });
+    const skillTable = await dataSource.getRepository("Coach_Skill");
+    const result = await skillTable.delete({
       id: targetId,
     });
 
