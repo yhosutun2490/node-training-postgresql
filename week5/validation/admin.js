@@ -1,41 +1,32 @@
 const { z } = require("zod");
 
-function createCoachValidate() {
-    const rules = z.object({
-        name: z
-          .string({
-            invalid_type_error: "name必須是字串",
-          })
-          .min(2, { message: "名稱至少需2個字" })
-          .max(10, { message: "名稱至多10個字" })
-          .regex(/^[a-zA-Z0-9]+$/, "名稱不可包含特殊符號或空白")
-          .nonempty("名稱name不能為空"),
-        email: z
-          .string({
-            invalid_type_error: "name必須是字串",
-          })
-          .email({ message: "email必須是符合格式" })
-          .nonempty("email不能為空"),
-        password: z
-          .string({
-            invalid_type_error: "name必須是字串",
-          })
-          .min(8, { message: "密碼至少需8位數" })
-          .max(16, { message: "密碼至多16位數" })
-          .regex(
-            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
-            "密碼需包含至少 1 個大寫字母、1 個小寫字母"
-          )
-          .nonempty("密碼不能為空"),
-        role: z
-        .string({
-          invalid_type_error: "name必須是字串",
-        })
-        .nonempty("權限角色不能為空"),
-      });
-      return rules.parse(body);
+function createCoachValidate(body) {
+  const rules = z.object({
+    user_id: z
+      .string({
+        invalid_type_error: "id必須是字串",
+      })
+      .nonempty("id不能為空")
+      .regex(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+        "ID 必須是有效格式"
+      ),
+    experience_years: z
+      .number({
+        required_error: "experience_years不能為空",
+        invalid_type_error: "experience_years必須是數字",
+      })
+      .min(0, "experience_years不能為負數"),
+    description: z
+      .string({
+        invalid_type_error: "description必須是字串",
+        required_error: "description不能為空",
+      })
+      .nonempty("description不能為空",),
+  });
+  return rules.parse(body);
 }
 
 module.exports = {
-    createCoachValidate
-}
+  createCoachValidate,
+};
