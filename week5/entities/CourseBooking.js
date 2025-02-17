@@ -2,7 +2,7 @@ const { EntitySchema } = require('typeorm')
 
 module.exports = new EntitySchema({
     name: "CourseBooking",
-    tableName: "Course_Booking",
+    tableName: "COURSE_BOOKING",
     columns: {
       id: {
         primary: true,
@@ -49,7 +49,7 @@ module.exports = new EntitySchema({
         joinColumn: {
             name: "user_id", // FK
         },
-        inverseSide: "courseBooking",
+        inverseSide: "courseBookings",
       },
       courses: {
         target: 'Course',
@@ -57,7 +57,7 @@ module.exports = new EntitySchema({
         joinColumn: {
             name: "course_id", // FK
         },
-        inverseSide: "courseBooking",
+        inverseSide: "courseBookings",
       }
 
     }

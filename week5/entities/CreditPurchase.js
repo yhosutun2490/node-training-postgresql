@@ -2,7 +2,7 @@ const { EntitySchema } = require('typeorm')
 
 module.exports = new EntitySchema({
   name: 'CreditPurchase',
-  tableName: 'CREDIT_Purchase',
+  tableName: 'CREDIT_PURCHASE',
   columns: {
     id: {
       primary: true,
@@ -15,7 +15,10 @@ module.exports = new EntitySchema({
       nullable: false,
     },
     price_paid: {
-
+      type: 'numeric',
+      precision: 10,
+      scale: 2,
+      nullable: false
     },
     credit_amount: {
       type: 'integer',

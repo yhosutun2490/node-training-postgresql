@@ -62,7 +62,7 @@ module.exports = new EntitySchema({
         inverseSide: "course",
       },
       coachLinkSkills: {
-        target: 'CoachSLinkSkill',
+        target: 'CoachLinkSkill',
         type: "many-to-one",
         joinColumn: {
           name: "skill_id", // FK name

@@ -2,8 +2,14 @@ const { DataSource } = require('typeorm')
 const config = require('../config/index')
 
 const CreditPackage = require('../entities/CreditPackages')
+const CreditPurchase = require('../entities/CreditPurchase')
 const CoachSkill = require('../entities/CoachSkill')
 const User = require('../entities/User')
+const Coach = require('../entities/Coach')
+const Course = require('../entities/Course')
+const CourseBooking = require('../entities/CourseBooking')
+const CoachSLinkSkill = require('../entities/CoachLinkSkill')
+
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -16,7 +22,12 @@ const dataSource = new DataSource({
   poolSize: 10,
   entities: [
     CreditPackage,
+    CreditPurchase,
     CoachSkill,
+    CoachSLinkSkill,
+    Coach,
+    Course,
+    CourseBooking,
     User
   ],
   ssl: config.get('db.ssl')
