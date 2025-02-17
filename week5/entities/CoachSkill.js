@@ -18,8 +18,8 @@ module.exports = new EntitySchema({
       },
       create_at: {
         type: "timestamp",
-        default: ()=> "CURRENT_TIMESTAMP",
+        createDate: true,
         nullable: false
-      }
+      },
     } 
   })

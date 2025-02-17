@@ -1,8 +1,8 @@
 const { EntitySchema } = require('typeorm')
 
 module.exports = new EntitySchema({
-    name: "User",
-    tableName: "User",
+    name: "Course",
+    tableName: "Course",
     columns: {
       id: {
         primary: true,
@@ -12,24 +12,28 @@ module.exports = new EntitySchema({
       },
       name: {
         type: "varchar",
-        length: 50,
-        unique: true,
+        length: 100,
         nullable: false
       },
-      email: {
-        type: "varchar",
-        length: 320,
-        unique: true,
+      description: {
+        type: "text",
         nullable: false
       },
-      role: {
-        type: "varchar",
-        length: 20,
+      start_at: {
+        type: 'timestamp',
         nullable: false
       },
-      password: {
+      end_at: {
+        type: 'timestamp',
+        nullable: false
+      },
+      max_participants: {
+        type: 'integer',
+        nullable: false
+      },
+      meeting_url: {
         type: "varchar",
-        length: 72,
+        length: 2048,
         nullable: false
       },
       create_at: {
@@ -41,31 +45,29 @@ module.exports = new EntitySchema({
         type: "timestamp",
         updateDate: true,
         nullable: false
-      }
-    },
+      },
+    } ,
     relations: {
-      coach: {
-        target: "Coach",
-        type: "one-to-one",
+      user: {
+        target: 'User',
+        type: 'many-to-one',
         joinColumn: {
-          name: "user_id",
+            name: "user_id", // FK
         },
-        inverseSide: "user",
-      },
-      creditPurchases: {
-        target: "CreditPurchase",
-        type: "one-to-many",
-        inverseSide: "user",
-      },
-      courses: {
-        target: "Course",
-        type: "one-to-many",
-        inverseSide: "user",
+        inverseSide: "courses",
       },
       courseBookings: {
         target: "CourseBooking",
         type: "one-to-many",
-        inverseSide: "user",
+        inverseSide: "course",
       },
+      coachLinkSkills: {
+        target: 'CoachSLinkSkill',
+        type: "many-to-one",
+        joinColumn: {
+          name: "skill_id", // FK name
+        },
+        inverseSide: "courses",
+      }
     }
   })

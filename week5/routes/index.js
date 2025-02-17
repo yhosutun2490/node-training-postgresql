@@ -6,9 +6,11 @@ const router = express.Router()
 const creditPackageRoute = require('./creditPackage')
 const coachSkillRoute = require('./coachSkill')
 const usersRoute = require('./users')
+const userAdminRouter = require('./admin')
 
 router.use('/api/credit-package',creditPackageRoute)
 router.use('/api/coaches/skill',coachSkillRoute)
 router.use('/api/users',usersRoute)
+router.use('/api/admin',userAdminRouter)
 
 module.exports = router

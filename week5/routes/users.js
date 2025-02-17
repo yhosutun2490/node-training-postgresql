@@ -46,7 +46,6 @@ router.post("/signup", async (req, res, next) => {
     } else if (err.message === "repeat_email") {
       customErrorResponse(res, 409, "Email已被使用");
     } else {
-      console.log("err錯誤", err);
       serverErrorResponse(res);
     }
   }

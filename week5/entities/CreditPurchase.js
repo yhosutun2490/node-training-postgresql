@@ -1,8 +1,8 @@
 const { EntitySchema } = require('typeorm')
 
 module.exports = new EntitySchema({
-  name: 'CreditPackage',
-  tableName: 'CREDIT_PACKAGE',
+  name: 'CreditPurchase',
+  tableName: 'CREDIT_Purchase',
   columns: {
     id: {
       primary: true,
@@ -10,11 +10,12 @@ module.exports = new EntitySchema({
       generated: 'uuid',
       nullable: false
     },
-    name: {
-      type: 'varchar',
-      length: 50,
+    purchase_credits: {
+      type: 'integer',
       nullable: false,
-      unique: true
+    },
+    price_paid: {
+
     },
     credit_amount: {
       type: 'integer',
@@ -30,6 +31,12 @@ module.exports = new EntitySchema({
       type: 'timestamp',
       createDate: true,
       name: 'created_at',
+      nullable: false
+    },
+    purchase_at: {
+      type: 'timestamp',
+      updateDate: true,
+      name: 'purchase_at',
       nullable: false
     }
   }
