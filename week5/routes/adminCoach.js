@@ -5,7 +5,8 @@ const { dataSource } = require("../db/data-source");
 const logger = require("../utils/logger")("CoachSkill");
 const {
   createCoachValidate,
-  createCoachCoursesValidate,
+  createCoursesValidate,
+  updateCourseValidate
 } = require("../validation/admin");
 const {
   successResponse,
@@ -37,9 +38,8 @@ router.get("/courses", async (req, res, next) => {
 // 新增教練課程
 router.post("/courses", async (req, res, next) => {
   try {
-    console.log("api 教練課程");
     const bodyData = req.body;
-    createCoachCoursesValidate(bodyData);
+    createCoachValidate(bodyData);
     const {
       user_id,
       skill_id,
@@ -103,6 +103,58 @@ router.post("/courses", async (req, res, next) => {
     }
   }
 });
+
+// 更新教練課程
+router.put("/courses/:courseId", async (req, res, next) =>{
+  try {
+    const course_id = req.params?.courseId
+    const bodyData = req.body;
+    const requestData = {
+      course_id,
+      ...bodyData
+    }
+    updateCourseValidate(requestData);
+    const isCourseExist = await dataSource.getRepository("Course").find({
+      where: { id: course_id },
+    });
+    if (!isCourseExist.length) {
+      throw new Error("no-exist-course");
+    } 
+    const courseTable = await dataSource.getRepository("Course");
+
+    const updateResult = await courseTable.update(
+      {id:course_id}, {...bodyData}
+    );
+    if (updateResult.affected > 0) {
+      successResponse(
+        res,
+        {
+          course: {
+            ...bodyData
+          },
+        },
+        200
+      );
+    } else {
+      throw new Error("update-failed")
+    }
+   
+  } catch (err) {
+
+    if (err.name === "ZodError") {
+      const zodErr = err.issues.map((item) => item.message);
+      customErrorResponse(res, 400, zodErr);
+    } else if (err.message === "no-exist-course") {
+      customErrorResponse(res, 400, "課程不存在");
+    } else if (err.message === "update-failed") {
+      customErrorResponse(res, 400, "更新失敗");
+    } 
+    else {
+      console.log('err',err)
+      next(err);
+    }
+  }
+})
 
 // 新增使用者為教練
 router.post("/:userId", async (req, res, next) => {
