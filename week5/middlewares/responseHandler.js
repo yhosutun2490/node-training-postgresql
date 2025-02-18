@@ -1,14 +1,4 @@
-/**
- * 500伺服器錯誤
- * @param {object} res res物件 
- * @returns 
- */
-function serverErrorResponse(res) {
-    return res.status(500).json({
-        status: "error",
-        message: "伺服器錯誤"
-    })
-}
+
 
 /**
  * 客製錯誤訊息
@@ -36,4 +26,4 @@ function successResponse(res,data,status=200) {
     })
 }
 
-module.exports = { serverErrorResponse, customErrorResponse, successResponse };
+module.exports = { customErrorResponse, successResponse };

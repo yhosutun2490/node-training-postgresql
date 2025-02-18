@@ -7,7 +7,6 @@ const { userSignUpValidator } = require("../validation/user");
 const {
   successResponse,
   customErrorResponse,
-  serverErrorResponse,
 } = require("../middlewares/responseHandler");
 
 router.post("/signup", async (req, res, next) => {
@@ -46,7 +45,7 @@ router.post("/signup", async (req, res, next) => {
     } else if (err.message === "repeat_email") {
       customErrorResponse(res, 409, "Email已被使用");
     } else {
-      serverErrorResponse(res);
+      next(err);
     }
   }
 });

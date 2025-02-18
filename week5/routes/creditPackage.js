@@ -10,7 +10,6 @@ const {
 const {
   successResponse,
   customErrorResponse,
-  serverErrorResponse,
 } = require("../middlewares/responseHandler");
 
 router.get("/", async (req, res, next) => {
@@ -20,8 +19,7 @@ router.get("/", async (req, res, next) => {
     });
     successResponse(res, data);
   } catch (err) {
-    console.log("err", err);
-    serverErrorResponse(res);
+    next(err);
   }
 });
 
@@ -60,7 +58,7 @@ router.post("/", async (req, res, next) => {
     } else if (err.message == "repeat_name") {
       customErrorResponse(res, 409, "資料重複");
     } else {
-      serverErrorResponse(res);
+      next(err);
     }
   }
 });
@@ -86,7 +84,7 @@ router.delete("/:id", async (req, res, next) => {
     } else if (err.name === "ZodError") {
       customErrorResponse(res, 403, "ID未填寫正確");
     } else {
-      serverErrorResponse(res);
+      next(err);
     }
   }
 });

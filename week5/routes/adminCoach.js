@@ -3,15 +3,17 @@ const express = require("express");
 const router = express.Router();
 const { dataSource } = require("../db/data-source");
 const logger = require("../utils/logger")("CoachSkill");
-const { createCoachValidate } = require("../validation/admin");
+const { 
+  createCoachValidate, 
+  createCoachCourses 
+} = require("../validation/admin");
 const {
   successResponse,
   customErrorResponse,
-  serverErrorResponse,
 } = require("../middlewares/responseHandler");
 
 // 新增使用者為教練
-router.post("/coaches/:userId", async (req, res, next) => {
+router.post("/:userId", async (req, res, next) => {
 
   try {
     const requestData = {
@@ -74,9 +76,15 @@ router.post("/coaches/:userId", async (req, res, next) => {
       customErrorResponse(res, 409, "使用者已經是教練");
     } 
     else {
-      serverErrorResponse(res);
+      next(err);
     }
   }
 });
+
+// 新增教練課程
+router.post("/courses", async (req, res, next)=>{
+
+})
+
 
 module.exports = router;
