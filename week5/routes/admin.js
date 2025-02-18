@@ -79,4 +79,23 @@ router.post("/coaches/:userId", async (req, res, next) => {
   }
 });
 
+// 取得所有課程資料
+router.get('/coaches/courses', async(req, res, next)=>{
+  try {
+    const data = await dataSource.getRepository('Course').find({
+      select: ['id','name', 'description', 'start_at', 'end_at', 'max_participants', 'meeting_url']
+    })
+    successResponse(res, data);
+  } catch(err) {
+    console.log('err',err)
+    serverErrorResponse(res)
+  }
+})
+
+
+// 新增課程資料
+router.post('/coaches/courses', async(req, res, next)=>{
+
+})
+
 module.exports = router;

@@ -8,6 +8,7 @@ const {
   deleteSkillValidator,
 } = require("../validation/validation");
 const {
+  customErrorResponse,
   successResponse,
   serverErrorResponse,
 } = require("../middlewares/responseHandler");
