@@ -44,7 +44,7 @@ module.exports = new EntitySchema({
       }
     },
     relations: {
-      coach: {
+      Coach: {
         target: "Coach",
         type: "one-to-one",
         joinColumn: {
@@ -52,17 +52,17 @@ module.exports = new EntitySchema({
         },
         inverseSide: "user",
       },
-      creditPurchases: {
+      CreditPurchases: {
         target: "CreditPurchase",
         type: "one-to-many",
         inverseSide: "user",
       },
-      courses: {
+      Course: {
         target: "Course",
         type: "one-to-many",
         inverseSide: "user",
       },
-      courseBookings: {
+      CourseBookings: {
         target: "CourseBooking",
         type: "one-to-many",
         inverseSide: "user",

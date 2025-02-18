@@ -9,6 +9,7 @@ const {
 } = require("../validation/validation");
 const {
   successResponse,
+  customErrorResponse
 } = require("../middlewares/responseHandler");
 
 router.get("/", async (req, res, next) => {

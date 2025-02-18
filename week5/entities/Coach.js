@@ -35,13 +35,15 @@ module.exports = new EntitySchema({
       },
     },
     relations: {
-      user: {
+      User: {
         target: 'User',
         type: 'one-to-one',
+        inverseSide: 'Coach',
         joinColumn: {
-            name: "user_id", // FK
-        },
-        inverseSide: "coach",
-      },
+          name: 'user_id',
+          referencedColumnName: 'id',
+          foreignKeyConstraintName: 'coach_user_id_fk'
+        }
+      }
     }
   })
