@@ -189,6 +189,7 @@ router.post("/:userId", async (req, res, next) => {
         experience_years,
         description,
       });
+      console.log('create 物件', createCoach)
       const createResult = await coachTable.save(createCoach);
       successResponse(
         res,

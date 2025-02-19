@@ -10,6 +10,12 @@ module.exports = new EntitySchema({
         generated: "uuid",
         nullable: false,
       },
+      user_id: {
+        primary: true,
+        type: "uuid",
+        generated: "uuid",
+        nullable: false,
+      },
       experience_years: {
         type: "integer",
         nullable: false
