@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const { dataSource } = require("../db/data-source");
-const logger = require("../utils/logger")("CoachSkill");
+const logger = require("../utils/logger")("AdminCoach");
 const {
   createCoachValidate,
   createCoursesValidate,
