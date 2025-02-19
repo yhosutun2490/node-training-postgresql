@@ -39,7 +39,7 @@ router.get("/courses", async (req, res, next) => {
 router.post("/courses", async (req, res, next) => {
   try {
     const bodyData = req.body;
-    createCoachValidate(bodyData);
+    createCoursesValidate(bodyData);
     const {
       user_id,
       skill_id,
