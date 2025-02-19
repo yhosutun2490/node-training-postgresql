@@ -43,29 +43,4 @@ module.exports = new EntitySchema({
         nullable: false
       }
     },
-    relations: {
-      Coach: {
-        target: "Coach",
-        type: "one-to-one",
-        joinColumn: {
-          name: "user_id",
-        },
-        inverseSide: "user",
-      },
-      CreditPurchases: {
-        target: "CreditPurchase",
-        type: "one-to-many",
-        inverseSide: "user",
-      },
-      Course: {
-        target: "Course",
-        type: "one-to-many",
-        inverseSide: "user",
-      },
-      CourseBookings: {
-        target: "CourseBooking",
-        type: "one-to-many",
-        inverseSide: "user",
-      },
-    }
   })
