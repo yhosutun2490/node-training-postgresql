@@ -2,29 +2,32 @@ const express = require("express");
 
 const router = express.Router();
 const { dataSource } = require("../db/data-source");
-const logger = require("../utils/logger")("CoachSkill");
-const { userSignUpValidator } = require("../validation/user");
+const logger = require("../utils/logger")("Users");
+const {
+  userSignUpValidator,
+  userLoginValidator,
+} = require("../middlewares/users/validateUser");
+const {
+  isEmailRepeat,
+  isUserExist
+} = require("../middlewares/users/index")
 const {
   successResponse,
-  customErrorResponse,
 } = require("../middlewares/responseHandler");
+const {
+  hashPassword  
+} = require("../utils/bcryptPassword")
 
-router.post("/signup", async (req, res, next) => {
+
+router.post("/signup",[userSignUpValidator,isEmailRepeat] ,async (req, res, next) => {
   try {
-    const bodyData = req.body;
-    userSignUpValidator(bodyData);
-    const { name, email, password, role } = bodyData;
+    const { name, email, password, role } = req.body;
     const userTable = await dataSource.getRepository("User");
-    const hasSameEmail = await userTable.findOne({
-      where: { email },
-    });
-    if (hasSameEmail) {
-      throw new Error("repeat_email");
-    }
+    const passwordHashed = await hashPassword(password)
     const createUser = userTable.create({
       name,
       email,
-      password,
+      password: passwordHashed,
       role,
     });
     const result = await userTable.save(createUser);
@@ -33,20 +36,22 @@ router.post("/signup", async (req, res, next) => {
       {
         user: {
           id: result.id,
-          name
+          name,
         },
       },
       201
     );
   } catch (err) {
-    if (err.name === "ZodError") {
-      const zodErr = err.issues.map((item) => item.message);
-      customErrorResponse(res, 400, zodErr);
-    } else if (err.message === "repeat_email") {
-      customErrorResponse(res, 409, "Email已被使用");
-    } else {
       next(err);
-    }
+  }
+});
+
+router.post("/login",[userLoginValidator, isUserExist],async (req, res, next) => {
+  try {
+    const { name, email } = req.body;
+    successResponse(res,req.body,200)
+  } catch (err) {
+    next(err);
   }
 });
 

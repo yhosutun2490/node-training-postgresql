@@ -25,9 +25,9 @@ app.use(route)
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   req.log.error(err)
-  res.status(500).json({
-    status: 'error',
-    message: '伺服器錯誤'
+  res.status(err.status || 500).json({
+    status: err.status?'failed' :'error',
+    message: err.message || '伺服器錯誤'
   })
 })
 

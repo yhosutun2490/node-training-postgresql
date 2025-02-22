@@ -1,5 +1,7 @@
 const { z } = require("zod");
-function userSignUpValidator(body) {
+const {generateError} = require('../../utils/generateError')
+
+function userSignUpValidator(req,res,next) {
   const rules = z.object({
     name: z
       .string({
@@ -32,13 +34,15 @@ function userSignUpValidator(body) {
       })
       .nonempty("權限角色不能為空"),
   });
-  const {success, error} = rules.safeParse(body);
-  return {
-    success,
-    error: error.errors.map(item=>item.message)
+  const {success, error} = rules.safeParse(req.body);
+  const errors = error?.errors.map(item=>item.message)
+  if (success) {
+    next()
+  } else {
+    next(generateError(400,errors))
   }
 }
-function userLoginValidator(body) {
+function userLoginValidator(req, res, next) {
   const rules = z.object({
     email: z
       .string({
@@ -58,10 +62,12 @@ function userLoginValidator(body) {
       )
       .nonempty("密碼不能為空"),
   });
-  const {success, error} = rules.safeParse(body);
-  return {
-    success,
-    error: error.errors.map(item=>item.message)
+  const {success, error} = rules.safeParse(req.body);
+  const errors = error?.errors.map(item=>item.message)
+  if (success) {
+    next()
+  } else {
+    next(generateError(400,errors))
   }
 }
 
