@@ -52,7 +52,7 @@ function userLoginValidator(req, res, next) {
       .nonempty("email不能為空"),
     password: z
       .string({
-        invalid_type_error: "name必須是字串",
+        invalid_type_error: "password必須是字串",
       })
       .min(8, { message: "密碼至少需8位數" })
       .max(16, { message: "密碼至多16位數" })

@@ -17,6 +17,7 @@ async function isEmailRepeat(req,res,next) {
     });
     if (hasSameEmail) {
         next(generateError(400,"Email已經被使用"))
+        return
     } else {
         next()
     }
@@ -38,13 +39,18 @@ async function isUserExist (req,res,next) {
         select: ["id","email","name","password"]
       });
   
-    if (!isUserExist) next(generateError(400,"使用者不存在或密碼輸入錯誤"))
+    if (!isUserExist) {
+        next(generateError(400,"使用者不存在或密碼輸入錯誤"))
+        return
+    }
     
     // bcript password check
     const databasePassword = isUserExist.password
-    console.log("要比對的密碼", password, databasePassword)
     const isMatch = await comparePassword(password, databasePassword)
-    if (!isMatch)  next(generateError(400,"使用者不存在或密碼輸入錯誤"))
+    if (!isMatch)  {
+        next(generateError(400,"使用者不存在或密碼輸入錯誤"))
+        return
+    }
 
     req.id = isUserExist.id // 加入id傳遞
     req.name = isUserExist.name
