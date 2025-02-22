@@ -8,10 +8,19 @@ const {
   userLoginValidator,
 } = require("../middlewares/users/validateUser");
 const { isEmailRepeat, isUserExist } = require("../middlewares/users/index");
+const { userAuth } = require("../middlewares/auth");
+
 const { successResponse } = require("../middlewares/responseHandler");
 const { hashPassword } = require("../utils/bcryptPassword");
 const { generateJwtToken } = require("../utils/generateJWTtoken");
-const config = require('../config/index')
+const config = require("../config/index");
+
+// userAuth init
+const auth = userAuth({
+  secret: config.get("secret").jwtSecret,
+  repository: dataSource.getRepository("User"),
+  logger,
+});
 
 router.post(
   "/signup",
@@ -28,6 +37,7 @@ router.post(
         role,
       });
       const result = await userTable.save(createUser);
+      logger.info("新建立的使用者ID:", result.id);
       successResponse(
         res,
         {
@@ -39,6 +49,7 @@ router.post(
         201
       );
     } catch (err) {
+      logger.error("創建user錯誤:", err);
       next(err);
     }
   }
@@ -58,16 +69,36 @@ router.post(
           expiresIn: `${config.get("secret.jwtExpiresDay")}`,
         }
       );
-      successResponse(res, {
-        token,
-        user: {
-          name: req.name
-        }
-      }, 200);
+      successResponse(
+        res,
+        {
+          token,
+          user: {
+            name: req.name,
+          },
+        },
+        200
+      );
     } catch (err) {
+      logger.error("登入錯誤:", err);
       next(err);
     }
   }
 );
+
+// 取得個人資料
+router.get("/profile", auth, async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    const userTable = dataSource.getRepository("User");
+    const user = await userTable.findOne({
+      select: ["name", "email"],
+      where: { id },
+    });
+    successResponse(res, { data: user });
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = router;
