@@ -35,7 +35,7 @@ async function isUserExist (req,res,next) {
     const userTable = await dataSource.getRepository("User");
     const isUserExist = await userTable.findOne({
         where: { email },
-        select: ["id","email","password"]
+        select: ["id","email","name","password"]
       });
   
     if (!isUserExist) next(generateError(400,"使用者不存在或密碼輸入錯誤"))
@@ -46,6 +46,8 @@ async function isUserExist (req,res,next) {
     const isMatch = await comparePassword(password, databasePassword)
     if (!isMatch)  next(generateError(400,"使用者不存在或密碼輸入錯誤"))
 
+    req.id = isUserExist.id // 加入id傳遞
+    req.name = isUserExist.name
     // pass
     next()
 }
