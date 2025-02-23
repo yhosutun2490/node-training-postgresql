@@ -11,9 +11,8 @@ function validateRequest(rules, statusCode = 400) {
       if (!rules?.safeParse) {
         return next(generateError(500, ['Invalid validation schema']));
       }
+      const { success, error } = rules.safeParse({...req.body});
   
-      const { success, error } = rules.safeParse(req.body);
-      
       if (success) {
         return next();
       } else {

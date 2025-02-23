@@ -1,6 +1,5 @@
 const { z } = require("zod");
-const {generateError} = require('../../utils/generateError')
-const { validateRequest } = require('../valiateRequest')
+const { validateRequest } = require('../validateRequest')
 
 function userSignUpValidator(req,res,next) {
   const rules = z.object({

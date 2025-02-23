@@ -9,7 +9,7 @@ const {
   userUpdateProfileValidator,
 } = require("../middlewares/users/validateUser");
 const {
-  isEmailRepeat,
+  isEmailOrNameRepeat,
   isUserExist,
   isUpdateSameName,
 } = require("../middlewares/users/index");
@@ -32,7 +32,7 @@ const auth = userAuth({
 
 router.post(
   "/signup",
-  [userSignUpValidator, isEmailRepeat],
+  [userSignUpValidator, isEmailOrNameRepeat],
   async (req, res, next) => {
     try {
       const { name, email, password, role } = req.body;
@@ -71,7 +71,7 @@ router.post(
       const token = await generateJwtToken(
         {
           id: req.id,
-          role: req.role
+          role: req.role,
         },
         config.get("secret.jwtSecret"),
         {

@@ -9,13 +9,13 @@ const { comparePassword } = require('../../utils/bcryptPassword')
  * @param {import("express").NextFunction} next - Express Next 函式
  * @returns {Promise<void>} - 無回傳值，驗證成功則調用 `next()`，否則傳遞錯誤
  */
-async function isEmailRepeat(req,res,next) {
+async function isEmailOrNameRepeat(req,res,next) {
     const email = req.body.email
     const name = req.body.name
     const userTable = await dataSource.getRepository("User");
     const existingUser = await userTable.findOne({
       where: [{email}, {name}]
-    });
+    }); // find 其中一個符合
     if (existingUser) {
         const conflictField = existingUser.email === email ? "Email" : "Name";
         next(generateError(400, `${conflictField} 已經被使用`));
@@ -76,7 +76,7 @@ async function isUpdateSameName(req,res,next) {
 }
 
 module.exports = {
-    isEmailRepeat,
+    isEmailOrNameRepeat,
     isUserExist,
     isUpdateSameName
 }
