@@ -36,7 +36,7 @@ async function isUserAlreadyBooked(req, res, next) {
   const userId = req.user.id; // token parse
   const isExistBookingCourse = await dataSource
     .getRepository("COURSE_BOOKING")
-    .find({
+    .findOne({
       where: [{ user_id: userId }, { course_id: courseId }],
     });
   if (isExistBookingCourse) {

@@ -52,7 +52,7 @@ router.post("/:courseId",auth,[
     isUserRemainBookingCredits,
     isOverCourseMaxParticipants
 ] ,async(req, res, next)=>{
-    const userId = req.user.user.id
+    const userId = req.user.id
     const courseId = req.params.courseId
     try {
         const bookingTable = dataSource.getRepository("COURSE_BOOKING") 
