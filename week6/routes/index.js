@@ -8,6 +8,7 @@ const coachSkillRoute = require('./coachSkill')
 const usersRoute = require('./users')
 const userAdminCoachRoute = require('./adminCoach')
 const coachesRoute = require('./coaches')
+const coursesRoute = require('./courses')
 
 // 總路由器 
 router.use('/api/credit-package',creditPackageRoute)
@@ -15,5 +16,6 @@ router.use('/api/coaches/skill',coachSkillRoute)
 router.use('/api/users',usersRoute)
 router.use('/api/admin/coaches',userAdminCoachRoute)
 router.use('/api/coaches',coachesRoute)
+router.use('/api/courses',coursesRoute)
 
 module.exports = router

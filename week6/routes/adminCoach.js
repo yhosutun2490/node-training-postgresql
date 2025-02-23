@@ -29,28 +29,6 @@ const auth = userAuth({
   logger,
 });
 
-// 取得所有課程
-router.get("/courses", async (req, res, next) => {
-  try {
-    const courseResult = await dataSource.getRepository("Course").find({
-      select: [
-        "id",
-        "user_id",
-        "skill_id",
-        "name",
-        "description",
-        "start_at",
-        "end_at",
-        "max_participants",
-        "meeting_url",
-      ],
-    });
-    successResponse(res, courseResult, 200);
-  } catch (err) {
-    next(err);
-  }
-});
-
 // 新增教練課程
 router.post(
   "/courses",
