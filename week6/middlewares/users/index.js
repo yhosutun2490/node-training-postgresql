@@ -58,7 +58,22 @@ async function isUserExist (req,res,next) {
     next()
 }
 
+async function isUpdateSameName(req,res,next) {
+    const id = req.user.id
+    const inputName = req.body.name
+    const isExistSameNameUser = await dataSource.getRepository('User').findOne({
+        where: {id},
+        select: ['name']
+    })
+    if (isExistSameNameUser.name === inputName) {
+        next(generateError(400,'使用者名稱未變更'))
+        return
+    }
+    next()
+}
+
 module.exports = {
     isEmailRepeat,
-    isUserExist
+    isUserExist,
+    isUpdateSameName
 }

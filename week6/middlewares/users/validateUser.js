@@ -71,7 +71,31 @@ function userLoginValidator(req, res, next) {
   }
 }
 
+function userUpdateProfileValidator(req, res, next) {
+
+  const rules = z.object({
+    name: z
+      .string({
+        invalid_type_error: "name必須是字串",
+      })
+      .min(2, { message: "名稱至少需2個字" })
+      .max(10, { message: "名稱至多10個字" })
+      .regex(/^[a-zA-Z0-9]+$/, "名稱不可包含特殊符號或空白")
+      .nonempty("名稱name不能為空"),
+  });
+  const {success, error} = rules.safeParse(req.body);
+  const errors = error?.errors.map(item=>item.message)
+  if (success) {
+    next()
+  } else {
+    next(generateError(400,errors))
+  }
+}
+
+
+
 module.exports = {
   userSignUpValidator,
   userLoginValidator,
+  userUpdateProfileValidator
 };

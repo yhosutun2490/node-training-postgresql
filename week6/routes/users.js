@@ -6,11 +6,19 @@ const logger = require("../utils/logger")("Users");
 const {
   userSignUpValidator,
   userLoginValidator,
+  userUpdateProfileValidator,
 } = require("../middlewares/users/validateUser");
-const { isEmailRepeat, isUserExist } = require("../middlewares/users/index");
+const {
+  isEmailRepeat,
+  isUserExist,
+  isUpdateSameName,
+} = require("../middlewares/users/index");
 const { userAuth } = require("../middlewares/auth");
 
-const { successResponse } = require("../middlewares/responseHandler");
+const {
+  successResponse,
+  customErrorResponse,
+} = require("../middlewares/responseHandler");
 const { hashPassword } = require("../utils/bcryptPassword");
 const { generateJwtToken } = require("../utils/generateJWTtoken");
 const config = require("../config/index");
@@ -100,5 +108,36 @@ router.get("/profile", auth, async (req, res, next) => {
     next(err);
   }
 });
+
+router.put(
+  "/profile",
+  [auth, userUpdateProfileValidator, isUpdateSameName],
+  async (req, res, next) => {
+    try {
+      const userTable = dataSource.getRepository("User");
+
+      const updateResult = await userTable.update(
+        {id: req.user.id},
+        {name: req.body.name},
+      );
+      if (updateResult.affected === 0) {
+        customErrorResponse(req, 400, "更新使用者資料失敗");
+        return;
+      } else {
+        const result = await userTable.findOne({
+          select: ["name"],
+          where: {
+            id: req.user.id,
+          },
+        });
+        successResponse(res, {
+          data: result
+        }, 200)
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 module.exports = router;
