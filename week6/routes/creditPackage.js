@@ -3,16 +3,33 @@ const express = require("express");
 const router = express.Router();
 const { dataSource } = require("../db/data-source");
 const logger = require("../utils/logger")("CreditPackage");
+
+const config = require("../config/index");
+const { userAuth } = require("../middlewares/auth");
+// userAuth init
+const auth = userAuth({
+  secret: config.get("secret").jwtSecret,
+  repository: dataSource.getRepository("User"),
+  logger,
+});
+
+const {
+  isUserExitAndCoach,
+  isPackageIdExist
+} = require("../middlewares//creditPackage/index")
+
 const {
   creditPackageValidator,
   deletePackageValidator,
-} = require("../validation/validation");
+  purchasePackageValidator
+} = require("../middlewares/creditPackage/validateCreditPackage");
 const {
   successResponse,
   customErrorResponse,
 } = require("../middlewares/responseHandler");
 
-router.get("/", async (req, res, next) => {
+// 取得課程包資訊(教練後台)
+router.get("/", [auth, isUserExitAndCoach],async (req, res, next) => {
   try {
     const data = await dataSource.getRepository("CREDIT_PACKAGE").find({
       select: ["id", "name", "credit_amount", "price"],
@@ -23,11 +40,11 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+// 新增課程包資訊(教練後台)
+router.post("/", [auth, isUserExitAndCoach, creditPackageValidator],async (req, res, next) => {
   try {
     // 檢核 body
     const bodyData = req.body;
-    creditPackageValidator(bodyData);
 
     // get datasource insert
     const { name, credit_amount, price } = bodyData;
@@ -63,11 +80,11 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+// 刪除課程包資訊(教練後台)
+router.delete("/:id",[auth, isUserExitAndCoach, deletePackageValidator],async (req, res, next) => {
   try {
     const targetId = req.params?.id;
     // id 格式檢核
-    deletePackageValidator({ id: targetId });
     const packageTable = await dataSource.getRepository("CREDIT_PACKAGE");
     const result = await packageTable.delete({
       id: targetId,
@@ -88,5 +105,25 @@ router.delete("/:id", async (req, res, next) => {
     }
   }
 });
+
+// 使用者購買課程包(使用者須先登入)
+router.post("/:creditPackageId", [auth,isPackageIdExist,purchasePackageValidator],async(req ,res ,next)=>{
+  try {
+    const userId = req.user.id
+    const packageData = req.package // isPackageIdExist middleware 檢查後傳出
+    const purchaseTable = dataSource.getRepository('CreditPurchase')
+    const newPurchase = await purchaseTable.create({
+      user_id: userId,
+      credit_package_id: packageData.id,
+      purchased_credits: packageData.credit_amount,
+      price_paid: packageData.price,
+      purchaseAt: new Date().toISOString()
+    })
+    await purchaseTable.save(newPurchase)
+    successResponse(res,null,200)
+  } catch(err) {
+    next(err)
+  }
+})
 
 module.exports = router;

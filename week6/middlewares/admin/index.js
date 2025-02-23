@@ -10,7 +10,7 @@ const { generateError } = require('../../utils/generateError')
  * @returns {Promise<void>} - 無回傳值，驗證成功則調用 `next()`，否則傳遞錯誤
  */
 async function isUserExitAndCoach(req,res,next) {
-    const id = req.body.user_id || req.params.userId
+    const id = req.body.user_id || req.params.userId 
     const existingUser = await dataSource.getRepository("User").findOne({
         where: [{ id }],
     });
@@ -76,7 +76,7 @@ async function isCourseExist(req,res,next) {
 }
 
 /**
- * 檢查skill id 課程是否存在
+ * 檢查skill id 技能是否存在
  * @param {import("express").Request} req - Express Request 物件
  * @param {import("express").Response} res - Express Response 物件
  * @param {import("express").NextFunction} next - Express Next 函式
