@@ -71,6 +71,7 @@ router.post(
       const token = await generateJwtToken(
         {
           id: req.id,
+          role: req.role
         },
         config.get("secret.jwtSecret"),
         {

@@ -1,5 +1,6 @@
 const { z } = require("zod");
 const {generateError} = require('../../utils/generateError')
+const { validateRequest } = require('../valiateRequest')
 
 function userSignUpValidator(req,res,next) {
   const rules = z.object({
@@ -34,13 +35,7 @@ function userSignUpValidator(req,res,next) {
       })
       .nonempty("權限角色不能為空"),
   });
-  const {success, error} = rules.safeParse(req.body);
-  const errors = error?.errors.map(item=>item.message)
-  if (success) {
-    next()
-  } else {
-    next(generateError(400,errors))
-  }
+  validateRequest(rules)(req, res, next)
 }
 function userLoginValidator(req, res, next) {
   const rules = z.object({
@@ -62,13 +57,7 @@ function userLoginValidator(req, res, next) {
       )
       .nonempty("密碼不能為空"),
   });
-  const {success, error} = rules.safeParse(req.body);
-  const errors = error?.errors.map(item=>item.message)
-  if (success) {
-    next()
-  } else {
-    next(generateError(400,errors))
-  }
+  validateRequest(rules)(req, res, next)
 }
 
 function userUpdateProfileValidator(req, res, next) {
@@ -83,13 +72,7 @@ function userUpdateProfileValidator(req, res, next) {
       .regex(/^[a-zA-Z0-9]+$/, "名稱不可包含特殊符號或空白")
       .nonempty("名稱name不能為空"),
   });
-  const {success, error} = rules.safeParse(req.body);
-  const errors = error?.errors.map(item=>item.message)
-  if (success) {
-    next()
-  } else {
-    next(generateError(400,errors))
-  }
+  validateRequest(rules)(req, res, next)
 }
 
 

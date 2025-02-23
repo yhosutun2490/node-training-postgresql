@@ -10,14 +10,16 @@ const { comparePassword } = require('../../utils/bcryptPassword')
  * @returns {Promise<void>} - 無回傳值，驗證成功則調用 `next()`，否則傳遞錯誤
  */
 async function isEmailRepeat(req,res,next) {
-    const email = req.email
+    const email = req.body.email
+    const name = req.body.name
     const userTable = await dataSource.getRepository("User");
-    const hasSameEmail = await userTable.findOne({
-      where: { email },
+    const existingUser = await userTable.findOne({
+      where: [{email}, {name}]
     });
-    if (hasSameEmail) {
-        next(generateError(400,"Email已經被使用"))
-        return
+    if (existingUser) {
+        const conflictField = existingUser.email === email ? "Email" : "Name";
+        next(generateError(400, `${conflictField} 已經被使用`));
+        return;
     } else {
         next()
     }
@@ -36,7 +38,7 @@ async function isUserExist (req,res,next) {
     const userTable = await dataSource.getRepository("User");
     const isUserExist = await userTable.findOne({
         where: { email },
-        select: ["id","email","name","password"]
+        select: ["id","name","role","password"]
       });
   
     if (!isUserExist) {
@@ -53,6 +55,7 @@ async function isUserExist (req,res,next) {
     }
 
     req.id = isUserExist.id // 加入id傳遞
+    req.role = isUserExist.role // 加入role傳遞
     req.name = isUserExist.name
     // pass
     next()
