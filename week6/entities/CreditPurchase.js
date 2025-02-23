@@ -10,9 +10,17 @@ module.exports = new EntitySchema({
       generated: 'uuid',
       nullable: false
     },
-    purchase_credits: {
+    user_id: {
+      type: 'uuid',
+      nullable: false
+    },
+    credit_package_id: {
+      type: 'uuid',
+      nullable: false
+    },
+    purchased_credits: {
       type: 'integer',
-      nullable: false,
+      nullable: false
     },
     price_paid: {
       type: 'numeric',
@@ -20,27 +28,36 @@ module.exports = new EntitySchema({
       scale: 2,
       nullable: false
     },
-    credit_amount: {
-      type: 'integer',
-      nullable: false
-    },
-    price: {
-      type: 'numeric',
-      precision: 10,
-      scale: 2,
-      nullable: false
-    },
-    created_at: {
+    createdAt: {
       type: 'timestamp',
       createDate: true,
       name: 'created_at',
       nullable: false
     },
-    purchase_at: {
+    purchaseAt: {
       type: 'timestamp',
-      updateDate: true,
       name: 'purchase_at',
       nullable: false
+    }
+  },
+  relations: {
+    User: {
+      target: 'User',
+      type: 'many-to-one',
+      joinColumn: {
+        name: 'user_id',
+        referencedColumnName: 'id',
+        foreignKeyConstraintName: 'credit_purchase_user_id_fk'
+      }
+    },
+    CreditPackage: {
+      target: 'CreditPackage',
+      type: 'many-to-one',
+      joinColumn: {
+        name: 'credit_package_id',
+        referencedColumnName: 'id',
+        foreignKeyConstraintName: 'credit_purchase_credit_package_id_fk'
+      }
     }
   }
 })
