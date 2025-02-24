@@ -23,6 +23,14 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(route)
 // eslint-disable-next-line no-unused-vars
+app.use((req,res,next)=>{
+  res.status(404).json({
+    status: 'failed',
+    message: '無此路由'
+  })
+  return
+})
+
 app.use((err, req, res, next) => {
   req.log.error(err)
   console.log('app err',err)
