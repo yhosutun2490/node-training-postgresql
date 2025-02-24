@@ -6,7 +6,7 @@ const logger = require("../utils/logger")("CoachSkill");
 const {
   createCoachesSkillValidator,
   deleteSkillValidator,
-} = require("../validation/validation");
+} = require("../middlewares/coachSkill/validateCoachSkill");
 const {
 
   successResponse,
@@ -24,14 +24,10 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", createCoachesSkillValidator,async (req, res, next) => {
   try {
-    // 檢核 body
-    const bodyData = req.body;
-    createCoachesSkillValidator(bodyData);
-
     // get datasource insert
-    const { name } = bodyData;
+    const { name } = req.body;
     const skillTable = await dataSource.getRepository("Coach_Skill");
 
     // 檢核package 名稱
@@ -52,9 +48,7 @@ router.post("/", async (req, res, next) => {
       throw new Error("repeat_name");
     }
   } catch (err) {
-    if (err.name === "ZodError") {
-      customErrorResponse(res, 403, "欄位未填寫正確");
-    } else if (err.message == "repeat_name") {
+     if (err.message == "repeat_name") {
       customErrorResponse(res, 409, "資料重複");
     } else {
       next(err);
@@ -62,11 +56,9 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id",deleteSkillValidator ,async (req, res, next) => {
   try {
     const targetId = req.params?.id;
-    // id 格式檢核
-    deleteSkillValidator({ id: targetId });
     const skillTable = await dataSource.getRepository("Coach_Skill");
     const result = await skillTable.delete({
       id: targetId,
@@ -80,9 +72,7 @@ router.delete("/:id", async (req, res, next) => {
   } catch (err) {
     if (err.message === "id_not_found") {
       customErrorResponse(res, 400, "ID錯誤");
-    } else if (err.name === "ZodError") {
-      customErrorResponse(res, 403, "ID未填寫正確");
-    } else {
+    }  else {
       next(err);
     }
   }

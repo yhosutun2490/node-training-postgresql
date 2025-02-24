@@ -9,23 +9,13 @@ const { generateError } = require('../../utils/generateError')
  * @param {import("express").NextFunction} next - Express Next 函式
  * @returns {Promise<void>} - 無回傳值，驗證成功則調用 `next()`，否則傳遞錯誤
  */
-async function isUserExitAndCoach(req,res,next) {
-    const id = req.body.user_id || req.params.userId 
-    const existingUser = await dataSource.getRepository("User").findOne({
-        where: [{ id }],
-    });
-    if (existingUser) {
-        const isNotCoach = existingUser.role !== 'coach';
-        if (isNotCoach) {
-            next(generateError(400, '使用者尚未成為教練'));
-            return;
-        } else {
-            next()
-        }
-       
-    } else {
-        next(generateError(400, '使用者不存在'));
-    }
+async function isCoach(req,res,next) {
+    const role = req.user.role
+    if (role !== 'coach') {
+        next(generateError(400, '使用者尚未成為教練'));
+        return;
+    } 
+    next()
 }
 
 /**
@@ -96,7 +86,7 @@ async function isSkillExist(req,res,next) {
 }
 
 module.exports = {
-    isUserExitAndCoach,
+    isCoach,
     isCreateCoachAlreadyExist,
     isCourseExist,
     isSkillExist

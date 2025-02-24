@@ -10,7 +10,7 @@ const {
 } = require("../middlewares/admin/validateAdmin");
 
 const {
-  isUserExitAndCoach,
+  isCoach,
   isCreateCoachAlreadyExist,
   isCourseExist,
   isSkillExist,
@@ -32,7 +32,7 @@ const auth = userAuth({
 // 新增教練課程
 router.post(
   "/courses",
-  [auth, isUserExitAndCoach, isSkillExist, createCoursesValidate],
+  [auth, createCoursesValidate,isCoach, isSkillExist],
   async (req, res, next) => {
     try {
       const {
@@ -86,7 +86,7 @@ router.post(
 // 更新教練課程
 router.put(
   "/courses/:courseId",
-  [auth, isUserExitAndCoach, isCourseExist, isSkillExist, updateCourseValidate],
+  [auth, updateCourseValidate,isCoach, isCourseExist, isSkillExist],
   async (req, res, next) => {
     try {
       const courseTable = await dataSource.getRepository("Course");
@@ -122,7 +122,7 @@ router.put(
 // 新增使用者為教練
 router.post(
   "/:userId",
-  [auth, isCreateCoachAlreadyExist, createCoachValidate],
+  [auth, createCoachValidate,isCreateCoachAlreadyExist],
   async (req, res, next) => {
     try {
       const requestData = {

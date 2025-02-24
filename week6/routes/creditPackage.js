@@ -41,7 +41,7 @@ router.get("/", [auth, isUserExitAndCoach],async (req, res, next) => {
 });
 
 // 新增課程包資訊(教練後台)
-router.post("/", [auth, isUserExitAndCoach, creditPackageValidator],async (req, res, next) => {
+router.post("/", [auth,creditPackageValidator ,isUserExitAndCoach],async (req, res, next) => {
   try {
     // 檢核 body
     const bodyData = req.body;
@@ -81,7 +81,7 @@ router.post("/", [auth, isUserExitAndCoach, creditPackageValidator],async (req, 
 });
 
 // 刪除課程包資訊(教練後台)
-router.delete("/:id",[auth, isUserExitAndCoach, deletePackageValidator],async (req, res, next) => {
+router.delete("/:id",[auth, deletePackageValidator ,isUserExitAndCoach],async (req, res, next) => {
   try {
     const targetId = req.params?.id;
     // id 格式檢核
@@ -107,7 +107,7 @@ router.delete("/:id",[auth, isUserExitAndCoach, deletePackageValidator],async (r
 });
 
 // 使用者購買課程包(使用者須先登入)
-router.post("/:creditPackageId", [auth,isPackageIdExist,purchasePackageValidator],async(req ,res ,next)=>{
+router.post("/:creditPackageId", [auth, purchasePackageValidator,isPackageIdExist],async(req ,res ,next)=>{
   try {
     const userId = req.user.id
     const packageData = req.package // isPackageIdExist middleware 檢查後傳出

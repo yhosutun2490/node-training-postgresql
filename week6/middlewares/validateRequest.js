@@ -1,7 +1,7 @@
 const {generateError} = require('../utils/generateError')
 
 /**
- * 檢核 request 參數的 middleware
+ * 檢核 request body參數的 middleware
  * @param {import('zod').ZodObject} rules - Zod 驗證 schema
  * @param {number} statusCode - 可選的錯誤狀態碼，默認為 400
  * @returns {function} Express middleware
