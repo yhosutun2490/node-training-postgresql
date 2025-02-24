@@ -4,7 +4,10 @@ const router = express.Router();
 const { dataSource } = require("../db/data-source");
 const logger = require("../utils/logger")("Coaches");
 
-const { getCoachByIdValidate } = require("../validation/coaches");
+const {
+  getCoachByIdValidate,
+} = require("../middlewares/coaches/validateCoaches");
+const { isCoachIdExist } = require("../middlewares/coaches/index");
 
 const {
   successResponse,
@@ -43,18 +46,15 @@ router.get("/", async (req, res, next) => {
 });
 
 // 根據id取得教練
-router.get("/:coachId", async (req, res, next) => {
-  try {
-    const targetId = req.params?.coachId;
-    getCoachByIdValidate({
-      user_id: targetId,
-    });
-    const isCoachExist = await dataSource.getRepository("Coach").find({
-      where: { id: targetId },
-    });
-    if (isCoachExist.length) {
+router.get(
+  "/:coachId",
+  [getCoachByIdValidate, isCoachIdExist],
+  async (req, res, next) => {
+    try {
+      const coachData = req.data.coach;
+
       const user = await dataSource.getRepository("User").findOne({
-        where: { id: isCoachExist[0]?.user_id },
+        where: { id: coachData[0]?.user_id },
         select: ["name", "role"], // 只選取 id 和 name
       });
 
@@ -62,22 +62,14 @@ router.get("/:coachId", async (req, res, next) => {
         res,
         {
           user,
-          coach: isCoachExist[0],
+          coach: coachData[0],
         },
         200
       );
-    } else {
-      throw new Error("coach-not-exist");
+    } catch (err) {
+      next(err);
     }
-  } catch (err) {
-    if (err.name === "ZodError") {
-      const zodErr = err.issues.map((item) => item.message);
-      customErrorResponse(res, 400, zodErr);
-    } else if (err.message === "coach-not-exist") {
-      customErrorResponse(res, 400, "找不到該教練");
-    }
-    next(err);
   }
-});
+);
 
 module.exports = router;

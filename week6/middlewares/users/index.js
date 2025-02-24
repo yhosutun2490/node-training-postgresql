@@ -61,6 +61,14 @@ async function isUserExist (req,res,next) {
     next()
 }
 
+
+/**
+ * 更新名稱是否一樣(無變更)
+ * @param {import("express").Request} req - Express Request 物件
+ * @param {import("express").Response} res - Express Response 物件
+ * @param {import("express").NextFunction} next - Express Next 函式
+ * @returns {Promise<void>} - 無回傳值，驗證成功則調用 `next()`，否則傳遞錯誤
+ */
 async function isUpdateSameName(req,res,next) {
     const id = req.user.id
     const inputName = req.body.name
