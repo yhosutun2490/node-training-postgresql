@@ -12,6 +12,7 @@ const {
   isEmailOrNameRepeat,
   isUserExist,
   isUpdateSameName,
+  isDBhasSameName
 } = require("../middlewares/users/index");
 const { userAuth } = require("../middlewares/auth");
 
@@ -112,7 +113,7 @@ router.get("/profile", auth, async (req, res, next) => {
 
 router.put(
   "/profile",
-  [auth, userUpdateProfileValidator, isUpdateSameName],
+  [auth,userUpdateProfileValidator,isUpdateSameName,isDBhasSameName],
   async (req, res, next) => {
     try {
       const userTable = dataSource.getRepository("User");

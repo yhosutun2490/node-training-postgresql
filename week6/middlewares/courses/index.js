@@ -37,9 +37,8 @@ async function isUserAlreadyBooked(req, res, next) {
   const isExistBookingCourse = await dataSource
     .getRepository("COURSE_BOOKING")
     .findOne({
-      where: [{ user_id: userId , course_id: courseId }],
+      where: [{ user_id: userId, course_id: courseId, cancelledAt: IsNull() }],
     });
-  console.log('exist course', isExistBookingCourse, 'course id',courseId,'user id',userId)
   if (isExistBookingCourse) {
     next(generateError(400, "用戶已經註冊該課程"));
     return;
@@ -109,5 +108,5 @@ module.exports = {
   isCourseIdExist,
   isUserAlreadyBooked,
   isUserRemainBookingCredits,
-  isOverCourseMaxParticipants
+  isOverCourseMaxParticipants,
 };

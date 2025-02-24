@@ -72,12 +72,32 @@ async function isUserExist (req,res,next) {
 async function isUpdateSameName(req,res,next) {
     const id = req.user.id
     const inputName = req.body.name
-    const isExistSameNameUser = await dataSource.getRepository('User').findOne({
+    const {name} = await dataSource.getRepository('User').findOne({
         where: {id},
         select: ['name']
     })
-    if (isExistSameNameUser.name === inputName) {
+    if (name === inputName) {
         next(generateError(400,'使用者名稱未變更'))
+        return
+    }
+    next()
+}
+
+
+/**
+ * 更新名稱受否和資料庫所有資料有重複
+ * @param {import("express").Request} req - Express Request 物件
+ * @param {import("express").Response} res - Express Response 物件
+ * @param {import("express").NextFunction} next - Express Next 函式
+ * @returns {Promise<void>} - 無回傳值，驗證成功則調用 `next()`，否則傳遞錯誤
+ */
+async function isDBhasSameName(req,res,next) {
+    const inputName = req.body.name
+    const isExistSameNameInDB = await dataSource.getRepository('User').find({
+        where: {name: inputName},
+    })
+    if (isExistSameNameInDB.length) {
+        next(generateError(400,'名稱已被其他人使用'))
         return
     }
     next()
@@ -86,5 +106,6 @@ async function isUpdateSameName(req,res,next) {
 module.exports = {
     isEmailOrNameRepeat,
     isUserExist,
-    isUpdateSameName
+    isUpdateSameName,
+    isDBhasSameName
 }
