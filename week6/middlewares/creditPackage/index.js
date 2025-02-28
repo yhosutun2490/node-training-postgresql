@@ -13,7 +13,7 @@ async function isUserExitAndCoach(req,res,next) {
         where: [{ id }],
     });
     if (existingUser) {
-        const isNotCoach = existingUser.role !== 'coach';
+        const isNotCoach = existingUser.role !== 'COACH';
         if (isNotCoach) {
             next(generateError(400, '使用者尚未成為教練'));
             return;

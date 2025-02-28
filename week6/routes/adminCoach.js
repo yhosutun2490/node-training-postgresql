@@ -133,7 +133,7 @@ router.post(
         requestData;
       const userTable = dataSource.getRepository("User");
       // 更新使用者 role 為 'coach'
-      await userTable.update(user_id, { role: "coach" });
+      await userTable.update(user_id, { role: "COACH" });
 
       // 創建coach資料
       try {
@@ -150,7 +150,7 @@ router.post(
           {
             user: {
               name: req.name,
-              role: "coach",
+              role: "COACH",
             },
             coach: {
               createResult,

@@ -32,7 +32,11 @@ router.get("/", async (req, res, next) => {
         .skip((page - 1) * per)
         .take(per)
         .getRawMany();
-      successResponse(res, result, 200);
+      const responseData = result.map(data=>({
+        id: data?.coach_id,
+        name: data?.user_name
+      }))
+      successResponse(res, responseData, 200);
     } else {
       throw new Error("lack-query-search");
     }
@@ -61,7 +65,7 @@ router.get(
       successResponse(
         res,
         {
-          user,
+          id:user,
           coach: coachData[0],
         },
         200

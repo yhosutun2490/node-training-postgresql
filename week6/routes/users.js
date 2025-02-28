@@ -12,7 +12,7 @@ const {
   isEmailOrNameRepeat,
   isUserExist,
   isUpdateSameName,
-  isDBhasSameName
+  isDBhasSameName,
 } = require("../middlewares/users/index");
 const { userAuth } = require("../middlewares/auth");
 
@@ -105,7 +105,9 @@ router.get("/profile", auth, async (req, res, next) => {
       select: ["name", "email"],
       where: { id },
     });
-    successResponse(res, { data: user });
+    successResponse(res, {
+      user,
+    });
   } catch (err) {
     next(err);
   }
@@ -113,14 +115,14 @@ router.get("/profile", auth, async (req, res, next) => {
 
 router.put(
   "/profile",
-  [auth,userUpdateProfileValidator,isUpdateSameName,isDBhasSameName],
+  [auth, userUpdateProfileValidator, isUpdateSameName, isDBhasSameName],
   async (req, res, next) => {
     try {
       const userTable = dataSource.getRepository("User");
 
       const updateResult = await userTable.update(
-        {id: req.user.id},
-        {name: req.body.name},
+        { id: req.user.id },
+        { name: req.body.name }
       );
       if (updateResult.affected === 0) {
         customErrorResponse(req, 400, "更新使用者資料失敗");
@@ -132,9 +134,7 @@ router.put(
             id: req.user.id,
           },
         });
-        successResponse(res, {
-          data: result
-        }, 200)
+        successResponse(res, result, 200);
       }
     } catch (err) {
       next(err);
