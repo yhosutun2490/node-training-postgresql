@@ -18,25 +18,16 @@ const {
 router.get("/", async (req, res, next) => {
   try {
     const { per, page } = req.query;
-    if (per>0 && page>0) {
+    if (per > 0 && page > 0) {
       const result = await dataSource
         .getRepository("Coach")
         .createQueryBuilder("coach")
-        .leftJoin("User", "user", "user.id = coach.user_id") // JOIN User 表
-        .select([
-          "coach.id",
-          "coach.experience_years",
-          "coach.description",
-          "user.name",
-        ])
+        .innerJoin("coach.user", "user") // JOIN User 表
+        .select(["coach.id AS id", "user.name AS name"])
         .skip((page - 1) * per)
         .take(per)
         .getRawMany();
-      const responseData = result.map(data=>({
-        id: data?.coach_id,
-        name: data?.user_name
-      }))
-      successResponse(res, responseData, 200);
+      successResponse(res, result, 200);
     } else {
       throw new Error("lack-query-search");
     }
@@ -65,7 +56,7 @@ router.get(
       successResponse(
         res,
         {
-          id:user,
+          id: user,
           coach: coachData[0],
         },
         200

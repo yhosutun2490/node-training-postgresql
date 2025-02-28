@@ -18,6 +18,7 @@ const {
 
 const config = require("../config/index");
 const { userAuth } = require("../middlewares/auth");
+const CoachSkill = require("../entities/CoachSkill");
 // userAuth init
 const auth = userAuth({
   secret: config.get("secret").jwtSecret,
@@ -28,19 +29,23 @@ const auth = userAuth({
 // 取得所有課程
 router.get("/", async (req, res, next) => {
   try {
-    const courseResult = await dataSource.getRepository("Course").find({
-      select: [
-        "id",
-        "user_id",
-        "skill_id",
-        "name",
-        "description",
-        "start_at",
-        "end_at",
-        "max_participants",
-        "meeting_url",
-      ],
-    });
+    // join table user table (get name), skill table (get skill name)
+    const courseResult = await dataSource
+      .getRepository("Course")
+      .createQueryBuilder("course")
+      .innerJoin("course.user", "user") // 關聯 User
+      .innerJoin("course.coachSkill", "skill") // 關聯 Coach_Skill
+      .select([
+        "course.id",
+        "user.name AS coach_name",
+        "skill.name",
+        "course.name",
+        "course.description",
+        "course.start_at",
+        "course.end_at",
+        "course.max_participants",
+      ])
+      .getRawMany();
     successResponse(res, courseResult, 200);
   } catch (err) {
     next(err);
