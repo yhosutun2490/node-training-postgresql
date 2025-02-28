@@ -33,7 +33,7 @@ async function isCreateCoachAlreadyExist(req,res,next) {
     if (existingUser) {
         const isCoach = existingUser.role === 'coach';
         if (isCoach) {
-            next(generateError(400, '使用者已經是教練'));
+            next(generateError(409, '使用者已經是教練'));
             return;
         } else {
             req.name = existingUser.name

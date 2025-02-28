@@ -18,7 +18,7 @@ async function isEmailOrNameRepeat(req,res,next) {
     }); // find 其中一個符合
     if (existingUser) {
         const conflictField = existingUser.email === email ? "Email" : "Name";
-        next(generateError(400, `${conflictField} 已經被使用`));
+        next(generateError(409, `${conflictField} 已經被使用`));
         return;
     } else {
         next()
@@ -97,7 +97,7 @@ async function isDBhasSameName(req,res,next) {
         where: {name: inputName},
     })
     if (isExistSameNameInDB.length) {
-        next(generateError(400,'名稱已被其他人使用'))
+        next(generateError(409,'名稱已被其他人使用'))
         return
     }
     next()
