@@ -73,7 +73,7 @@ async function isUserRemainBookingCredits(req, res, next) {
       cancelledAt: IsNull(), // 排除有取消紀錄者(等待上課的)
     },
   });
-  if (userCredits < userUsedCredits) {
+  if (userCredits <= userUsedCredits) {
     next(generateError(400, "已無可使用堂數"));
     return;
   } else {
@@ -92,7 +92,6 @@ async function isUserRemainBookingCredits(req, res, next) {
 async function isOverCourseMaxParticipants(req, res, next) {
   const bookingCourseTable = dataSource.getRepository("COURSE_BOOKING");
   const courseTable = dataSource.getRepository("Course");
-  const userId = req.user.id;
   const courseId = req.params.courseId;
   // 該課程所有已登記註冊堂數 course_id
   const courseBookedCounts = await bookingCourseTable.count({
