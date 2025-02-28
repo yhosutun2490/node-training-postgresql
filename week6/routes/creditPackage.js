@@ -65,7 +65,7 @@ router.post("/", [auth,creditPackageValidator ,isUserExitAndCoach],async (req, r
       successResponse(res, {
         id: createId,
         name,
-      });
+      },201);
     } else {
       throw new Error("repeat_name");
     }
@@ -120,7 +120,7 @@ router.post("/:creditPackageId", [auth, purchasePackageValidator,isPackageIdExis
       purchaseAt: new Date().toISOString()
     })
     await purchaseTable.save(newPurchase)
-    successResponse(res,null,200)
+    successResponse(res,null,201)
   } catch(err) {
     next(err)
   }

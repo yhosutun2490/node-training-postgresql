@@ -71,7 +71,7 @@ router.post(
         course_id: courseId,
       });
       await bookingTable.save(newBooking);
-      successResponse(res, null, 200);
+      successResponse(res, null, 201);
     } catch (err) {
       next(err);
     }

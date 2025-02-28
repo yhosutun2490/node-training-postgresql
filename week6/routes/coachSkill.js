@@ -43,7 +43,7 @@ router.post("/", createCoachesSkillValidator,async (req, res, next) => {
       successResponse(res, {
         id: createId,
         name,
-      });
+      },201);
     } else {
       throw new Error("repeat_name");
     }
