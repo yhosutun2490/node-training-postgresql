@@ -1,5 +1,5 @@
 const { dataSource } = require("../../db/data-source");
-
+const { generateError } = require("../../utils/generateError");
 /**
  * 檢查user是否存在和角色role為教練('coach')
  * @param {import("express").Request} req - Express Request 物件
