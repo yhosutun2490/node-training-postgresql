@@ -18,7 +18,7 @@ const {
 router.get("/", async (req, res, next) => {
   try {
     const { per, page } = req.query;
-    if (per && page) {
+    if (per>0 && page>0) {
       const result = await dataSource
         .getRepository("Coach")
         .createQueryBuilder("coach")
@@ -38,7 +38,7 @@ router.get("/", async (req, res, next) => {
     }
   } catch (err) {
     if (err.message === "lack-query-search") {
-      customErrorResponse(res, 400, "請指定參數");
+      customErrorResponse(res, 400, "請指定正確參數");
     } else {
       next(err);
     }
