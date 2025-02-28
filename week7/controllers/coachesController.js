@@ -1,9 +1,8 @@
 const { dataSource } = require("../db/data-source");
-const logger = require("../utils/logger")("CoachSkillController");
+const logger = require("../utils/logger")("CoachesController");
 const catchAsync = require("../utils/catchAsync");
 const {
   successResponse,
-  customErrorResponse,
 } = require("../middlewares/responseHandler");
 
 const coaches = {
