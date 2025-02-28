@@ -1,6 +1,6 @@
 const { dataSource } = require("../../db/data-source");
 const { generateError } = require("../../utils/generateError");
-
+const { catchAsync } = require('../../utils/catchAsync')
 /**
  * 檢查教練id是否有對應資料
  * course_booking Table find course_id and user_id
@@ -24,5 +24,5 @@ async function isCoachIdExist(req, res, next) {
 }
 
 module.exports = {
-  isCoachIdExist,
+  isCoachIdExist: catchAsync(isCoachIdExist),
 };

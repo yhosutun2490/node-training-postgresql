@@ -1,5 +1,6 @@
 const { dataSource } = require("../../db/data-source");
 const { generateError } = require("../../utils/generateError");
+const { catchAsync } = require('../../utils/catchAsync')
 /**
  * 檢查user是否存在和角色role為教練('coach')
  * @param {import("express").Request} req - Express Request 物件
@@ -48,6 +49,6 @@ async function isPackageIdExist(req,res,next) {
 }
 
 module.exports = {
-    isUserExitAndCoach,
-    isPackageIdExist
+    isUserExitAndCoach: catchAsync(isUserExitAndCoach),
+    isPackageIdExist: catchAsync(isPackageIdExist)
 }

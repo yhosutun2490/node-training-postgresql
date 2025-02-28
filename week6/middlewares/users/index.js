@@ -1,6 +1,7 @@
 const { dataSource } = require("../../db/data-source");
 const { generateError } = require('../../utils/generateError')
 const { comparePassword } = require('../../utils/bcryptPassword')
+const { catchAsync } = require('../../utils/catchAsync')
 
 /**
  * 檢查 email 是否已經被使用
@@ -104,8 +105,8 @@ async function isDBhasSameName(req,res,next) {
 }
 
 module.exports = {
-    isEmailOrNameRepeat,
-    isUserExist,
-    isUpdateSameName,
-    isDBhasSameName
+    isEmailOrNameRepeat: catchAsync(isEmailOrNameRepeat),
+    isUserExist: catchAsync(isUserExist),
+    isUpdateSameName: catchAsync(isUpdateSameName),
+    isDBhasSameName: catchAsync(isDBhasSameName)
 }

@@ -1,6 +1,7 @@
 const { dataSource } = require("../../db/data-source");
 const { generateError } = require("../../utils/generateError");
 const { IsNull } = require("typeorm");
+const { catchAsync } = require('../../utils/catchAsync')
 
 /**
  * 檢查課程id是有對應到課程
@@ -113,8 +114,8 @@ async function isOverCourseMaxParticipants(req, res, next) {
 }
 
 module.exports = {
-  isCourseIdExist,
-  isUserAlreadyBooked,
-  isUserRemainBookingCredits,
-  isOverCourseMaxParticipants,
+  isCourseIdExist: catchAsync(isCourseIdExist),
+  isUserAlreadyBooked: catchAsync(isUserAlreadyBooked),
+  isUserRemainBookingCredits: catchAsync(isUserRemainBookingCredits),
+  isOverCourseMaxParticipants: catchAsync(isOverCourseMaxParticipants),
 };

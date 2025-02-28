@@ -1,6 +1,7 @@
 
 const { dataSource } = require("../../db/data-source");
 const { generateError } = require('../../utils/generateError')
+const { catchAsync } = require('../../utils/catchAsync')
 
 /**
  * 檢查user是否存在和角色role為教練('coach')
@@ -86,8 +87,8 @@ async function isSkillExist(req,res,next) {
 }
 
 module.exports = {
-    isCoach,
-    isCreateCoachAlreadyExist,
-    isCourseExist,
-    isSkillExist
+    isCoach: catchAsync(isCoach),
+    isCreateCoachAlreadyExist: catchAsync(isCreateCoachAlreadyExist),
+    isCourseExist: catchAsync(isCourseExist),
+    isSkillExist: catchAsync(isSkillExist)
 }
