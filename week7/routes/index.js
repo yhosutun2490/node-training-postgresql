@@ -7,7 +7,7 @@ const creditPackageRoute = require('./creditPackage')
 const coachSkillRoute = require('./coachSkill')
 const usersRoute = require('./users')
 const userAdminCoachRoute = require('./adminCoach')
-const userAdminCoachCourseRoute = require('./adminCoachCoures')
+const userAdminCoachCourseRoute = require('./adminCoachCourses')
 const coachesRoute = require('./coaches')
 const coursesRoute = require('./courses')
 

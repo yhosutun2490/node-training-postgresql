@@ -1,6 +1,10 @@
 const { dataSource } = require("../db/data-source");
 const logger = require("../utils/logger")("AdminCoachController");
 const catchAsync = require("../utils/catchAsync");
+const {
+  successResponse,
+  customErrorResponse,
+} = require("../middlewares/responseHandler");
 
 const adminCoachCourses = {
   getAllCourses: catchAsync(),
