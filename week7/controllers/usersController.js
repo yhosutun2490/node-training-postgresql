@@ -1,4 +1,3 @@
-const express = require("express");
 const { dataSource } = require("../db/data-source");
 const logger = require("../utils/logger")("UsersController");
 const catchAsync = require("../utils/catchAsync");
