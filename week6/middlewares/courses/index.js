@@ -12,7 +12,7 @@ const { catchAsync } = require('../../utils/catchAsync')
  */
 async function isCourseIdExist(req, res, next) {
   const courseId = req.params.courseId;
-  const existingCourse = await dataSource.getRepository("COURSE").findOne({
+  const existingCourse = await dataSource.getRepository("Course").findOne({
     where: [{ id: courseId }],
   });
   if (!existingCourse) {
