@@ -9,7 +9,7 @@ function userSignUpValidator(req,res,next) {
       })
       .min(2, { message: "名稱至少需2個字" })
       .max(10, { message: "名稱至多10個字" })
-      .regex(/^[a-zA-Z0-9]+$/, "名稱不可包含特殊符號或空白")
+      .regex(/^[a-zA-Z0-9\u4e00-\u9fa5]+$/, "名稱不可包含特殊符號或空白")
       .nonempty("名稱name不能為空"),
     email: z
       .string({
