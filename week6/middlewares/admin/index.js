@@ -12,7 +12,7 @@ const { catchAsync } = require('../../utils/catchAsync')
  */
 async function isCoach(req,res,next) {
     const role = req.user.role
-    if (role !== 'coach') {
+    if (role !== 'COACH') {
         next(generateError(400, '使用者尚未成為教練'));
         return;
     } 
