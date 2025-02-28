@@ -103,6 +103,26 @@ async function isDBhasSameName(req,res,next) {
     next()
 }
 
+/**
+ * 更新個人密碼時 1. 檢查舊密碼是否輸入正確  2.新密碼是否與舊密碼不重複
+ * @param {import("express").Request} req - Express Request 物件
+ * @param {import("express").Response} res - Express Response 物件
+ * @param {import("express").NextFunction} next - Express Next 函式
+ * @returns {Promise<void>} - 無回傳值，驗證成功則調用 `next()`，否則傳遞錯誤
+ */
+async function isUpdatePasswordCorrect(req, res, next) {
+    const userId = req.user.id // token parse user id
+    const inputPassword = req.body.password
+    // find user with id
+    const userData = await dataSource.getRepository('User').findOneBy({
+        where: {id: userId},
+    })
+    // check input password is same 
+    const isMatch = await comparePassword(password, databasePassword)
+
+    
+}
+
 module.exports = {
     isEmailOrNameRepeat,
     isUserExist,

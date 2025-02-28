@@ -1,7 +1,7 @@
 const { z } = require("zod");
-const { validateRequest } = require('../validateRequest')
+const { validateRequest } = require("../validateRequest");
 
-function userSignUpValidator(req,res,next) {
+function userSignUpValidator(req, res, next) {
   const rules = z.object({
     name: z
       .string({
@@ -34,7 +34,7 @@ function userSignUpValidator(req,res,next) {
       })
       .nonempty("權限角色不能為空"),
   });
-  validateRequest(rules)(req, res, next)
+  validateRequest(rules)(req, res, next);
 }
 function userLoginValidator(req, res, next) {
   const rules = z.object({
@@ -56,11 +56,10 @@ function userLoginValidator(req, res, next) {
       )
       .nonempty("密碼不能為空"),
   });
-  validateRequest(rules)(req, res, next)
+  validateRequest(rules)(req, res, next);
 }
 
 function userUpdateProfileValidator(req, res, next) {
-
   const rules = z.object({
     name: z
       .string({
@@ -71,13 +70,56 @@ function userUpdateProfileValidator(req, res, next) {
       .regex(/^[a-zA-Z0-9]+$/, "名稱不可包含特殊符號或空白")
       .nonempty("名稱name不能為空"),
   });
-  validateRequest(rules)(req, res, next)
+  validateRequest(rules)(req, res, next);
 }
 
-
+function userUpdatePasswordValidator(req, res, next) {
+  const rules = z.object({
+    password: z
+      .string({
+        invalid_type_error: "password必須是字串",
+      })
+      .min(8, { message: "密碼至少需8位數" })
+      .max(16, { message: "密碼至多16位數" })
+      .regex(
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
+        "密碼需包含至少 1 個大寫字母、1 個小寫字母"
+      )
+      .nonempty("password不能為空"),
+    new_password: z
+      .string({
+        invalid_type_error: "new_password必須是字串",
+      })
+      .min(8, { message: "密碼至少需8位數" })
+      .max(16, { message: "密碼至多16位數" })
+      .regex(
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
+        "密碼需包含至少 1 個大寫字母、1 個小寫字母"
+      )
+      .nonempty("new_password不能為空"),
+    confirm_password: z
+      .string({
+        invalid_type_error: "confirm_password必須是字串",
+      })
+      .min(8, { message: "密碼至少需8位數" })
+      .max(16, { message: "密碼至多16位數" })
+      .regex(
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
+        "密碼需包含至少 1 個大寫字母、1 個小寫字母"
+      )
+      .nonempty("confirm_password不能為空"),
+  }).refine(data=>{
+    data.new_password === data.confirm_password, {
+      message: "新密碼與確認密碼必須一致",
+      path: ["confirm_password"],
+    }
+  });
+  validateRequest(rules)(req, res, next);
+}
 
 module.exports = {
   userSignUpValidator,
   userLoginValidator,
-  userUpdateProfileValidator
+  userUpdateProfileValidator,
+  userUpdatePasswordValidator,
 };

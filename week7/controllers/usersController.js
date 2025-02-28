@@ -104,9 +104,13 @@ const profile = {
     }
   }),
 };
+const password = {
+  put: catchAsync()
+}
 
 module.exports = {
   signup,
   login,
   profile,
+  password
 };
