@@ -122,7 +122,7 @@ router.put(
 // 新增使用者為教練
 router.post(
   "/:userId",
-  [auth, createCoachValidate,isCreateCoachAlreadyExist],
+  auth, createCoachValidate,isCreateCoachAlreadyExist,
   async (req, res, next) => {
     try {
       const requestData = {
@@ -152,9 +152,7 @@ router.post(
               name: req.name,
               role: "COACH",
             },
-            coach: {
-              createResult,
-            },
+            coach: createResult,
           },
           201
         );
