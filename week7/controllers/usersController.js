@@ -42,26 +42,26 @@ const signup = {
 const login = {
   post: catchAsync(async (req, res, next) => {
     const token = await generateJwtToken(
-        {
-          id: req.id,
-          role: req.role,
+      {
+        id: req.id,
+        role: req.role,
+      },
+      config.get("secret.jwtSecret"),
+      {
+        expiresIn: `${config.get("secret.jwtExpiresDay")}`,
+      }
+    );
+    logger.info("用戶登入成功:", req.name);
+    successResponse(
+      res,
+      {
+        token,
+        user: {
+          name: req.name,
         },
-        config.get("secret.jwtSecret"),
-        {
-          expiresIn: `${config.get("secret.jwtExpiresDay")}`,
-        }
-      );
-      logger.info("用戶登入成功:", req.name);
-      successResponse(
-        res,
-        {
-          token,
-          user: {
-            name: req.name,
-          },
-        },
-        200
-      );
+      },
+      200
+    );
   }),
 };
 
@@ -74,7 +74,7 @@ const profile = {
       where: { id },
     });
     logger.info("取得個人profile資料成功:", user);
-    successResponse(res, { data: user });
+    successResponse(res, user);
   }),
   put: catchAsync(async (req, res, next) => {
     const userTable = dataSource.getRepository("User");
@@ -94,25 +94,17 @@ const profile = {
         },
       });
       logger.info("更新個人profile資料成功:", result);
-      successResponse(
-        res,
-        {
-          data: result,
-        },
-        200
-      );
+      successResponse(res, result, 200);
     }
   }),
 };
 const password = {
-  put: catchAsync(async(req, res ,next)=>{
-
-  })
-}
+  put: catchAsync(async (req, res, next) => {}),
+};
 
 module.exports = {
   signup,
   login,
   profile,
-  password
+  password,
 };
