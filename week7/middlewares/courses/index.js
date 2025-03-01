@@ -1,6 +1,7 @@
 const { dataSource } = require("../../db/data-source");
 const { generateError } = require("../../utils/generateError");
 const { IsNull } = require("typeorm");
+const { catchAsync } = require('../../utils/catchAsync')
 
 /**
  * 檢查課程id是有對應到課程
@@ -11,7 +12,7 @@ const { IsNull } = require("typeorm");
  */
 async function isCourseIdExist(req, res, next) {
   const courseId = req.params.courseId;
-  const existingCourse = await dataSource.getRepository("COURSE").findOne({
+  const existingCourse = await dataSource.getRepository("Course").findOne({
     where: [{ id: courseId }],
   });
   if (!existingCourse) {
@@ -72,7 +73,7 @@ async function isUserRemainBookingCredits(req, res, next) {
       cancelledAt: IsNull(), // 排除有取消紀錄者(等待上課的)
     },
   });
-  if (userCredits < userUsedCredits) {
+  if (userCredits <= userUsedCredits) {
     next(generateError(400, "已無可使用堂數"));
     return;
   } else {
@@ -80,15 +81,22 @@ async function isUserRemainBookingCredits(req, res, next) {
   }
 }
 
+/**
+ * 檢查課程所有註冊量 使否大於課程規定人數
+ * course table vs course booking 比較
+ * @param {import("express").Request} req - Express Request 物件
+ * @param {import("express").Response} res - Express Response 物件
+ * @param {import("express").NextFunction} next - Express Next 函式
+ * @returns {Promise<void>} - 無回傳值，驗證成功則調用 `next()`，否則傳遞錯誤
+ */
 async function isOverCourseMaxParticipants(req, res, next) {
   const bookingCourseTable = dataSource.getRepository("COURSE_BOOKING");
   const courseTable = dataSource.getRepository("Course");
-  const userId = req.user.id;
   const courseId = req.params.courseId;
-  // 該課程所有已登記註冊堂數
+  // 該課程所有已登記註冊堂數 course_id
   const courseBookedCounts = await bookingCourseTable.count({
     where: {
-      user_id: userId,
+      course_id: courseId,
       cancelledAt: IsNull(), // 排除有取消紀錄者(等待上課的)
     },
   });
@@ -105,8 +113,8 @@ async function isOverCourseMaxParticipants(req, res, next) {
 }
 
 module.exports = {
-  isCourseIdExist,
-  isUserAlreadyBooked,
-  isUserRemainBookingCredits,
-  isOverCourseMaxParticipants,
+  isCourseIdExist: catchAsync(isCourseIdExist),
+  isUserAlreadyBooked: catchAsync(isUserAlreadyBooked),
+  isUserRemainBookingCredits: catchAsync(isUserRemainBookingCredits),
+  isOverCourseMaxParticipants: catchAsync(isOverCourseMaxParticipants),
 };

@@ -18,7 +18,6 @@ function getCoachByIdValidate(req,res,next) {
   validateRequest(rules)(req,res,next)
   delete  req.body.user_id
 }
-
 module.exports = {
   getCoachByIdValidate,
 };

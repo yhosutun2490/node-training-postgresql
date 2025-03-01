@@ -1,6 +1,7 @@
 
 const { dataSource } = require("../../db/data-source");
 const { generateError } = require('../../utils/generateError')
+const { catchAsync } = require('../../utils/catchAsync')
 
 /**
  * 檢查user是否存在和角色role為教練('coach')
@@ -11,7 +12,7 @@ const { generateError } = require('../../utils/generateError')
  */
 async function isCoach(req,res,next) {
     const role = req.user.role
-    if (role !== 'coach') {
+    if (role !== 'COACH') {
         next(generateError(400, '使用者尚未成為教練'));
         return;
     } 
@@ -31,9 +32,9 @@ async function isCreateCoachAlreadyExist(req,res,next) {
         where: [{ id }],
     });
     if (existingUser) {
-        const isCoach = existingUser.role === 'coach';
+        const isCoach = existingUser.role === 'COACH';
         if (isCoach) {
-            next(generateError(400, '使用者已經是教練'));
+            next(generateError(409, '使用者已經是教練'));
             return;
         } else {
             req.name = existingUser.name
@@ -85,9 +86,36 @@ async function isSkillExist(req,res,next) {
     }
 }
 
+
+/**
+ * 檢查教練名稱是否已經存在
+ * @param {import("express").Request} req - Express Request 物件
+ * @param {import("express").Response} res - Express Response 物件
+ * @param {import("express").NextFunction} next - Express Next 函式
+ * @returns {Promise<void>} - 無回傳值，驗證成功則調用 `next()`，否則傳遞錯誤
+ */
+async function isCreateCoachAlreadyExist(req,res,next) {
+    const id = req.body.user_id || req.params.userId
+    const existingUser = await dataSource.getRepository("User").findOne({
+        where: [{ id }],
+    });
+    if (existingUser) {
+        const isCoach = existingUser.role === 'COACH';
+        if (isCoach) {
+            next(generateError(409, '使用者已經是教練'));
+            return;
+        } else {
+            req.name = existingUser.name
+            next()
+        }
+       
+    } else {
+        next(generateError(400, '使用者不存在'));
+    }
+}
 module.exports = {
-    isCoach,
-    isCreateCoachAlreadyExist,
-    isCourseExist,
-    isSkillExist
+    isCoach: catchAsync(isCoach),
+    isCreateCoachAlreadyExist: catchAsync(isCreateCoachAlreadyExist),
+    isCourseExist: catchAsync(isCourseExist),
+    isSkillExist: catchAsync(isSkillExist)
 }

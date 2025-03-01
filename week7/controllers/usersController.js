@@ -1,12 +1,12 @@
 const { dataSource } = require("../db/data-source");
 const logger = require("../utils/logger")("UsersController");
-const catchAsync = require("../utils/catchAsync");
+const { catchAsync } = require("../utils/catchAsync");
 const {
   successResponse,
   customErrorResponse,
 } = require("../middlewares/responseHandler");
 
-// bcrycript and JWT
+// bcrypt and JWT
 const { hashPassword } = require("../utils/bcryptPassword");
 const { generateJwtToken } = require("../utils/generateJWTtoken");
 
@@ -105,7 +105,9 @@ const profile = {
   }),
 };
 const password = {
-  put: catchAsync()
+  put: catchAsync(async(req, res ,next)=>{
+
+  })
 }
 
 module.exports = {

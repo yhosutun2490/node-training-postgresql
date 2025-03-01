@@ -20,7 +20,7 @@ function creditPackageValidator (req, res, next) {
 }
 function deletePackageValidator(req, res, next) {
     const rules =  z.object({
-        id: z.string({
+        delete_id: z.string({
             invalid_type_error: "id必須是字串",
         }).nonempty("id不能為空")
         .regex(
@@ -28,8 +28,9 @@ function deletePackageValidator(req, res, next) {
             "ID 必須是有效格式"
           )
         })
-
+    req.body = {delete_id: req.params.id, ...req.body}
     validateRequest(rules)(req, res, next)
+    delete req.body.delete_id
 }
 
 function purchasePackageValidator(req, res, next) {

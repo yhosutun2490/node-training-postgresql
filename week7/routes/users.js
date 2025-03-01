@@ -1,5 +1,4 @@
 const express = require("express");
-
 const router = express.Router();
 const { dataSource } = require("../db/data-source");
 const logger = require("../utils/logger")("Users");
@@ -21,7 +20,7 @@ const {
   signup,
   login,
   profile,
-  password,
+  password: passwordController,
 } = require("../controllers/usersController");
 
 const { userAuth } = require("../middlewares/auth");
@@ -49,5 +48,5 @@ router.put(
 );
 
 // 更新個人密碼
-router.put("/password", auth, [userUpdatePasswordValidator], password.put);
+router.put("/password", auth, [userUpdatePasswordValidator], passwordController.put);
 module.exports = router;

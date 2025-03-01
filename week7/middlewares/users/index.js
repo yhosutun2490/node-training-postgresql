@@ -1,6 +1,7 @@
 const { dataSource } = require("../../db/data-source");
 const { generateError } = require('../../utils/generateError')
 const { comparePassword } = require('../../utils/bcryptPassword')
+const { catchAsync } = require('../../utils/catchAsync')
 
 /**
  * 檢查 email 是否已經被使用
@@ -18,7 +19,7 @@ async function isEmailOrNameRepeat(req,res,next) {
     }); // find 其中一個符合
     if (existingUser) {
         const conflictField = existingUser.email === email ? "Email" : "Name";
-        next(generateError(400, `${conflictField} 已經被使用`));
+        next(generateError(409, `${conflictField} 已經被使用`));
         return;
     } else {
         next()
@@ -97,35 +98,15 @@ async function isDBhasSameName(req,res,next) {
         where: {name: inputName},
     })
     if (isExistSameNameInDB.length) {
-        next(generateError(400,'名稱已被其他人使用'))
+        next(generateError(409,'名稱已被其他人使用'))
         return
     }
     next()
 }
 
-/**
- * 更新個人密碼時 1. 檢查舊密碼是否輸入正確  2.新密碼是否與舊密碼不重複
- * @param {import("express").Request} req - Express Request 物件
- * @param {import("express").Response} res - Express Response 物件
- * @param {import("express").NextFunction} next - Express Next 函式
- * @returns {Promise<void>} - 無回傳值，驗證成功則調用 `next()`，否則傳遞錯誤
- */
-async function isUpdatePasswordCorrect(req, res, next) {
-    const userId = req.user.id // token parse user id
-    const inputPassword = req.body.password
-    // find user with id
-    const userData = await dataSource.getRepository('User').findOneBy({
-        where: {id: userId},
-    })
-    // check input password is same 
-    const isMatch = await comparePassword(password, databasePassword)
-
-    
-}
-
 module.exports = {
-    isEmailOrNameRepeat,
-    isUserExist,
-    isUpdateSameName,
-    isDBhasSameName
+    isEmailOrNameRepeat: catchAsync(isEmailOrNameRepeat),
+    isUserExist: catchAsync(isUserExist),
+    isUpdateSameName: catchAsync(isUpdateSameName),
+    isDBhasSameName: catchAsync(isDBhasSameName)
 }
