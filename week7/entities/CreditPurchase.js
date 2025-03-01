@@ -41,7 +41,7 @@ module.exports = new EntitySchema({
     }
   },
   relations: {
-    User: {
+    user: {
       target: 'User',
       type: 'many-to-one',
       joinColumn: {
@@ -50,7 +50,7 @@ module.exports = new EntitySchema({
         foreignKeyConstraintName: 'credit_purchase_user_id_fk'
       }
     },
-    CreditPackage: {
+    creditPackage: {
       target: 'CreditPackage',
       type: 'many-to-one',
       joinColumn: {

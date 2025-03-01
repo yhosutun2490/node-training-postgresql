@@ -102,26 +102,47 @@ const profile = {
 const password = {
   put: catchAsync(async (req, res, next) => {
     // update user table password
-    // hash password 
-    const userId = req.user.id
-    const newPassword = req.body.new_password
-    const hashNewPassword = await hashPassword(newPassword)
+    // hash password
+    const userId = req.user.id;
+    const newPassword = req.body.new_password;
+    const hashNewPassword = await hashPassword(newPassword);
 
     // find user table and update
-    const userTable = dataSource.getRepository('User') 
+    const userTable = dataSource.getRepository("User");
     try {
       await userTable.update(
         {
-          id:userId
+          id: userId,
         },
         {
-          password: hashNewPassword
-        })
-        successResponse(res,null,200)
+          password: hashNewPassword,
+        }
+      );
+      successResponse(res, null, 200);
     } catch {
-      generateError(400,'更新密碼失敗')
+      generateError(400, "更新密碼失敗");
     }
-  
+  }),
+};
+
+const package = {
+  get: catchAsync(async (req, res, next) => {
+    // get user bought packages
+    const userId = req.user.id;
+    const purchaseTable = dataSource.getRepository("CreditPurchase");
+    const result = await purchaseTable
+      .createQueryBuilder("purchase")
+      .innerJoin("purchase.creditPackage", "package")
+      .where("purchase.user_id = :id", { id: userId }) // user id find user
+      .select([
+        "purchase.purchased_credits AS purchased_credits",
+        "purchase.price_paid AS price_paid ",
+        "package.name AS name",
+        "purchase.purchase_at",
+      ])
+      .getRawMany();
+
+    successResponse(res, result, 200);
   }),
 };
 
@@ -130,4 +151,5 @@ module.exports = {
   login,
   profile,
   password,
+  package,
 };

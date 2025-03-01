@@ -22,6 +22,7 @@ const {
   login,
   profile,
   password: passwordController,
+  package
 } = require("../controllers/usersController");
 
 const { userAuth } = require("../middlewares/auth");
@@ -65,4 +66,8 @@ router.put(
   [userUpdatePasswordValidator, isUserInputPasswordMatchDb],
   passwordController.put
 );
+
+// 取得個人已購買的課程包
+router.get("/credit-package",auth,package.get)
+
 module.exports = router;
