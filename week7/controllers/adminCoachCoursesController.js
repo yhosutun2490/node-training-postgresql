@@ -5,6 +5,7 @@ const {
   successResponse,
   customErrorResponse,
 } = require("../middlewares/responseHandler");
+const CourseBooking = require("../entities/CourseBooking");
 
 const adminCoachCourses = {
   getAllCourses: catchAsync(),
@@ -83,8 +84,34 @@ const adminCoachCourses = {
       }
     }
   }),
+  getCoachCourse: catchAsync(async (req, res, next) => {
+    // data need participants from booking table
+    const userId = req.user.id; // 教練本身的userId
+    // const bookingTable = dataSource.getRepository("CourseBooking");
+    const courseTable = dataSource.getRepository("Course");
+    const courseLists = await courseTable
+      .createQueryBuilder("course")
+      .innerJoin("course.user", "user")
+      .where("user.id = :id", { id: userId })
+      .innerJoinAndSelect(
+        CourseBooking,
+        "booking",
+        "course.id = booking.course_id AND booking.cancelled_at IS NULL"
+      )
+      .select([
+        "course.id AS id",
+        "course.name AS name",
+        "course.max_participants AS max_participants",
+        "course.start_at AS start_at",
+        "course.end_at AS end_at",
+        "COUNT(*) AS participants" // 已註冊所有人數
+      ])
+      .groupBy("course.id") // 同一課程
+      .getRawMany();
+    successResponse(res, courseLists, 200);
+  }),
 };
 
 module.exports = {
-    adminCoachCourses
-}
+  adminCoachCourses,
+};

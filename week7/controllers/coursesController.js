@@ -5,6 +5,7 @@ const {
   successResponse,
   customErrorResponse,
 } = require("../middlewares/responseHandler");
+const {IsNull} = require("typeorm")
 
 const courses = {
   get: catchAsync(async (req, res, next) => {

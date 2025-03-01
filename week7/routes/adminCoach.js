@@ -17,6 +17,7 @@ const {
 
 const config = require("../config/index");
 const { userAuth } = require("../middlewares/auth");
+const { AuthMechanism } = require("typeorm");
 // userAuth init
 const auth = userAuth({
   secret: config.get("secret").jwtSecret,
@@ -32,5 +33,8 @@ router.post(
   [createCoachValidate,isCreateCoachAlreadyExist],
   adminCoach.post
 );
+
+
+
 
 module.exports = router;

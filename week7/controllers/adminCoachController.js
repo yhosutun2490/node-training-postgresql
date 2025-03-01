@@ -7,6 +7,7 @@ const {
 } = require("../middlewares/responseHandler");
 
 const adminCoach = {
+ 
   post: catchAsync(async (req, res, next) => {
     const requestData = {
       user_id: req.params?.userId,

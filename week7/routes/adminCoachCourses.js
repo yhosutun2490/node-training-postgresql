@@ -25,6 +25,9 @@ const auth = userAuth({
   logger,
 });
 
+// 取得教練個人的所有課程
+router.get("/",auth,isCoach,adminCoachCourses.getCoachCourse)
+
 // 新增教練課程
 router.post(
   "/",
