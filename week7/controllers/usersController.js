@@ -12,6 +12,7 @@ const { generateJwtToken } = require("../utils/generateJWTtoken");
 
 // config
 const config = require("../config/index");
+const { generateError } = require("../utils/generateError");
 
 const signup = {
   post: catchAsync(async (req, res, next) => {
@@ -99,7 +100,29 @@ const profile = {
   }),
 };
 const password = {
-  put: catchAsync(async (req, res, next) => {}),
+  put: catchAsync(async (req, res, next) => {
+    // update user table password
+    // hash password 
+    const userId = req.user.id
+    const newPassword = req.body.new_password
+    const hashNewPassword = await hashPassword(newPassword)
+
+    // find user table and update
+    const userTable = dataSource.getRepository('User') 
+    try {
+      await userTable.update(
+        {
+          id:userId
+        },
+        {
+          password: hashNewPassword
+        })
+        successResponse(res,null,200)
+    } catch {
+      generateError(400,'更新密碼失敗')
+    }
+  
+  }),
 };
 
 module.exports = {

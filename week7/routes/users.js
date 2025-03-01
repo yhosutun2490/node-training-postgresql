@@ -6,13 +6,14 @@ const {
   userSignUpValidator,
   userLoginValidator,
   userUpdateProfileValidator,
-  userUpdatePasswordValidator
+  userUpdatePasswordValidator,
 } = require("../middlewares/users/validateUser");
 const {
   isEmailOrNameRepeat,
   isUserExist,
   isUpdateSameName,
   isDBhasSameName,
+  isUserInputPasswordMatchDb,
 } = require("../middlewares/users/index");
 
 // controller
@@ -48,5 +49,10 @@ router.put(
 );
 
 // 更新個人密碼
-router.put("/password", auth, [userUpdatePasswordValidator], passwordController.put);
+router.put(
+  "/password",
+  auth,
+  [userUpdatePasswordValidator, isUserInputPasswordMatchDb],
+  passwordController.put
+);
 module.exports = router;

@@ -98,7 +98,7 @@ function userUpdatePasswordValidator(req, res, next) {
           "new_password需包含至少 1 個大寫字母、1 個小寫字母"
         )
         .nonempty("new_password不能為空"),
-      confirm_password: z
+      confirm_new_password: z
         .string({
           invalid_type_error: "confirm_password必須是字串",
         })
@@ -110,9 +110,13 @@ function userUpdatePasswordValidator(req, res, next) {
         )
         .nonempty("confirm_password不能為空"),
     })
-    .refine((data) => data.new_password === data.confirm_password, {
-      message: "new_password 和 confirm_password 必須相同",
+    .refine((data) => data.new_password === data.confirm_new_password, {
+      message: "新密碼與驗證新密碼不一致",
       path: ["confirm_password"],
+    })
+    .refine((data) => data.new_password !== data.password, {
+      message: "新密碼和舊密碼不能相同",
+      path: ["new_password"],
     });
   validateRequest(rules)(req, res, next);
 }
