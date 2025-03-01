@@ -87,7 +87,7 @@ const adminCoachCourses = {
   getCoachCourse: catchAsync(async (req, res, next) => {
     // data need participants from booking table
     const userId = req.user.id; // 教練本身的userId
-    // const bookingTable = dataSource.getRepository("CourseBooking");
+
     const courseTable = dataSource.getRepository("Course");
     const courseLists = await courseTable
       .createQueryBuilder("course")
@@ -104,7 +104,12 @@ const adminCoachCourses = {
         "course.max_participants AS max_participants",
         "course.start_at AS start_at",
         "course.end_at AS end_at",
-        "COUNT(*) AS participants" // 已註冊所有人數
+        "COUNT(*) AS participants", // 已註冊所有人數
+        `CASE 
+        WHEN course.start_at > NOW() THEN '已開放報名'
+        WHEN course.start_at <= NOW() AND course.end_at > NOW() THEN '開課中'
+        ELSE '已結束'
+        END AS status`, // 自行和現在時間計算 判斷是否開課
       ])
       .groupBy("course.id") // 同一課程
       .getRawMany();
