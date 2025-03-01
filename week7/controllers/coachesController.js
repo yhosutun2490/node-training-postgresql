@@ -1,9 +1,7 @@
 const { dataSource } = require("../db/data-source");
 const logger = require("../utils/logger")("CoachesController");
 const { catchAsync } = require("../utils/catchAsync");
-const {
-  successResponse,
-} = require("../middlewares/responseHandler");
+const { successResponse } = require("../middlewares/responseHandler");
 
 const coaches = {
   getCoachByPage: catchAsync(async (req, res, next) => {
@@ -42,20 +40,39 @@ const coaches = {
     );
   }),
   getCourseByCoachId: catchAsync(async (req, res, next) => {
-    const coachId = req.params.coachId // coach table id
-    console.log('教練id',coachId)
-    // inner join User and Course Table
-    const coachTable = dataSource.getRepository('Coach')
-    const courseLists = coachTable.createQueryBuilder('coach')
-    .where('coach.id = :id',{id: coachId})
-    .innerJoin('coach.user','user')
-    .select([
-      'user.name AS name'
-    ])
-    .getRawMany()
-    successResponse(res,courseLists,200) 
+    const coachId = req.params.coachId; // coach table id
 
-  })
+    // 先取出userid 再去course table join
+    const courseTable = dataSource.getRepository("Course");
+    const coachTable = dataSource.getRepository("Coach");
+    const userResult = await coachTable
+      .createQueryBuilder("coach")
+      .where("coach.id = :id", { id: coachId })
+      .innerJoin("coach.user", "user")
+      .select("user.id")
+      .getRawOne();
+    const user_id = userResult.user_id;
+
+    // course table join User and Skill get name
+    const courseLists = await courseTable
+      .createQueryBuilder("course")
+      .innerJoin("course.user", "user")
+      .innerJoin("course.coachSkill", "skill")
+      .where("course.user_id = :user_id", { user_id })
+      .select([
+        "course.id AS id",
+        "course.name AS name",
+        "course.description AS description",
+        "course.start_at AS start_at",
+        "course.end_at AS end_at",
+        "course.max_participants AS max_participants",
+        "user.name AS coach_name",
+        "skill.name AS skill_name",
+      ])
+      .getRawMany();
+
+    successResponse(res, courseLists, 200);
+  }),
 };
 
 module.exports = {
