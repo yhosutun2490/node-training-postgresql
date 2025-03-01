@@ -19,13 +19,20 @@ const {
 } = require("../controllers/coachesController")
 
 // 取得教練列表分頁
-router.get("/", checkPaginationParams, coaches.getByPage)
+router.get("/", checkPaginationParams, coaches.getCoachByPage)
 
 // 根據id取得教練
 router.get(
   "/:coachId",
   [getCoachByIdValidate, isCoachIdExist],
-  coaches.getById
+  coaches.getCoachById
 );
+
+// 根據id取得個別教練開課列表
+router.get(
+  "/:coachId/courses",
+  [getCoachByIdValidate, isCoachIdExist],
+  coaches.getCourseByCoachId
+)
 
 module.exports = router;

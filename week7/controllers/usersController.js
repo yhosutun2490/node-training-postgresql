@@ -183,7 +183,7 @@ const course = {
     successResponse(
       res,
       {
-        credit_remain: Number(userTotalCredits.total_credits),
+        credit_remain: Number(userTotalCredits.total_credits) - usedCredits,
         credit_usage: usedCredits,
         course_booking: userBookingClass,
       },

@@ -6,7 +6,7 @@ const {
 } = require("../middlewares/responseHandler");
 
 const coaches = {
-  getByPage: catchAsync(async (req, res, next) => {
+  getCoachByPage: catchAsync(async (req, res, next) => {
     const { per, page } = req.query;
 
     const result = await dataSource
@@ -24,7 +24,7 @@ const coaches = {
       .getRawMany();
     successResponse(res, result, 200);
   }),
-  getById: catchAsync(async (req, res, next) => {
+  getCoachById: catchAsync(async (req, res, next) => {
     const coachData = req.data.coach;
 
     const user = await dataSource.getRepository("User").findOne({
@@ -41,6 +41,21 @@ const coaches = {
       200
     );
   }),
+  getCourseByCoachId: catchAsync(async (req, res, next) => {
+    const coachId = req.params.coachId // coach table id
+    console.log('教練id',coachId)
+    // inner join User and Course Table
+    const coachTable = dataSource.getRepository('Coach')
+    const courseLists = coachTable.createQueryBuilder('coach')
+    .where('coach.id = :id',{id: coachId})
+    .innerJoin('coach.user','user')
+    .select([
+      'user.name AS name'
+    ])
+    .getRawMany()
+    successResponse(res,courseLists,200) 
+
+  })
 };
 
 module.exports = {
