@@ -146,10 +146,57 @@ const package = {
   }),
 };
 
+const course = {
+  get: catchAsync(async (req, res, next) => {
+    // get users booking course
+    // data
+    // 1. total credits and used credit
+    // 2. course name and coach name
+    // User/ Course join get coach name
+    const userId = req.user.id;
+    const purchaseTable = dataSource.getRepository("CreditPurchase");
+    const bookingTable = dataSource.getRepository("CourseBooking");
+    const userBookingClass = await bookingTable
+      .createQueryBuilder("booking")
+      .innerJoin("booking.course", "course")
+      .where("booking.user_id = :id", { id: userId })
+      .andWhere("booking.cancelled_at is Null")
+      .innerJoin("course.user", "user")
+      .select([
+        "user.name AS coach_name",
+        "booking.course_id AS course_id",
+        "course.name AS name",
+        "course.start_at AS start_at",
+        "course.end_at AS end_at",
+        "course.meeting_url AS meeting_url",
+        "booking.status AS status",
+      ])
+      .getRawMany();
+    // 已預約堂數
+    const usedCredits = userBookingClass.length;
+    // user 總購買堂數
+    const userTotalCredits = await purchaseTable
+      .createQueryBuilder("purchase")
+      .innerJoin("purchase.user", "user")
+      .select("SUM(purchase.purchased_credits) AS total_credits")
+      .getRawOne();
+    successResponse(
+      res,
+      {
+        credit_remain: Number(userTotalCredits.total_credits),
+        credit_usage: usedCredits,
+        course_booking: userBookingClass,
+      },
+      200
+    );
+  }),
+};
+
 module.exports = {
   signup,
   login,
   profile,
   password,
   package,
+  course,
 };

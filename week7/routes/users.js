@@ -22,7 +22,8 @@ const {
   login,
   profile,
   password: passwordController,
-  package
+  package,
+  course
 } = require("../controllers/usersController");
 
 const { userAuth } = require("../middlewares/auth");
@@ -69,5 +70,8 @@ router.put(
 
 // 取得個人已購買的課程包
 router.get("/credit-package",auth,package.get)
+
+// 取得個人已經預約的課程
+router.get("/courses",auth, course.get)
 
 module.exports = router;

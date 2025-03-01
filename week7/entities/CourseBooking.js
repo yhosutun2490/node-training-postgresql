@@ -24,6 +24,12 @@ module.exports = new EntitySchema({
       name: 'booking_at',
       nullable: false
     },
+    status: {
+      type: 'varchar',
+      length: 20,
+      default: 'pending',
+      nullable: false
+    },
     joinAt: {
       type: 'timestamp',
       name: 'join_at',
@@ -52,7 +58,7 @@ module.exports = new EntitySchema({
     }
   },
   relations: {
-    User: {
+    user: {
       target: 'User',
       type: 'many-to-one',
       joinColumn: {
@@ -61,7 +67,7 @@ module.exports = new EntitySchema({
         foreignKeyConstraintName: 'course_booking_user_id_fk'
       }
     },
-    CreditPackage: {
+    course: {
       target: 'Course',
       type: 'many-to-one',
       joinColumn: {
