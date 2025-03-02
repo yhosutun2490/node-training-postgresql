@@ -178,6 +178,7 @@ const course = {
     const userTotalCredits = await purchaseTable
       .createQueryBuilder("purchase")
       .innerJoin("purchase.user", "user")
+      .where("purchase.user_id = :user_id", {user_id: userId})
       .select("SUM(purchase.purchased_credits) AS total_credits")
       .getRawOne();
     successResponse(
