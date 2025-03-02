@@ -21,19 +21,15 @@ const adminCoach = {
         "skill_link",
         "skill_link.coach_id = coach.id"
       )
-      .leftJoinAndSelect(
-        "CoachSkill",
-        "skill",
-        "skill.id = skill_link.skill_id"
-      )
       .where("user.id = :id", { id: userId })
       .select([
         "coach.id AS id",
         "coach.experience_years AS experience_years",
         "coach.description AS description",
         "coach.profile_image_url AS profile_image_url",
-        "skill.id AS skill_ids",
+        "ARRAY_AGG(skill_link.skill_id) AS skill_ids", // 多組skills ids
       ])
+      .groupBy("coach.id")
       .getRawMany();
     if (coachResult?.length) {
       // skill id null -> empty array
@@ -101,15 +97,12 @@ const adminCoach = {
         skill_id: skillId,
       };
     });
-    console.log('skillData-------',skillData)
-    const updateSkillRes =await skillLinkTable.upsert(skillData, {
+    console.log("skillData-------", skillData);
+    const updateSkillRes = await skillLinkTable.upsert(skillData, {
       conflictPaths: ["coach_id", "skill_id"], // 設置複合唯一鍵，不重複插入
       skipUpdateIfNoValuesChanged: true,
     });
-    successResponse(res,{
-      updateCoachRes,
-      updateSkillRes
-    },200)
+    successResponse(res, req.body, 200);
   }),
 };
 
