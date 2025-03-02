@@ -15,7 +15,7 @@ const {
 } = require("../middlewares/responseHandler");
 
 const {
-  coaches
+  coaches,
 } = require("../controllers/coachesController")
 
 // 取得教練列表分頁
@@ -34,5 +34,7 @@ router.get(
   [getCoachByIdValidate, isCoachIdExist],
   coaches.getCourseByCoachId
 )
+
+
 
 module.exports = router;

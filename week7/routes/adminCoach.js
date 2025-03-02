@@ -11,7 +11,8 @@ const {
 } = require("../middlewares/admin/index");
 
 const {
-  adminCoach
+  adminCoach,
+  revenue
 } = require("../controllers/adminCoachController")
 
 
@@ -27,6 +28,9 @@ const auth = userAuth({
 
 // 取得教練自己的個人資料
 router.get("/",auth, adminCoach.get)
+
+// 取得教練個人營收資料(月份)
+router.get("/revenue",auth,revenue.get)
 
 // 新增使用者為教練
 router.post(

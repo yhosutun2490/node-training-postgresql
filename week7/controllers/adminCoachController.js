@@ -75,6 +75,13 @@ const adminCoach = {
   }),
 };
 
+const revenue = {
+  get: catchAsync(async(req, res, next)=>{
+
+  })
+}
+
 module.exports = {
   adminCoach,
+  revenue
 };
