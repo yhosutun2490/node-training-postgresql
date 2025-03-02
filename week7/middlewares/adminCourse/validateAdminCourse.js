@@ -1,7 +1,7 @@
 const { z } = require("zod");
 const { validateRequest } = require('../validateRequest')
 /**
- * 檢查課程uudi是否正確
+ * 檢查課程uuid是否正確
  * @param {import("express").Request} req - Express Request 物件
  * @param {import("express").Response} res - Express Response 物件
  * @param {import("express").NextFunction} next - Express Next 函式

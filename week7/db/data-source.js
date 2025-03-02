@@ -8,7 +8,7 @@ const User = require('../entities/User')
 const Coach = require('../entities/Coach')
 const Course = require('../entities/Course')
 const CourseBooking = require('../entities/CourseBooking')
-const CoachSLinkSkill = require('../entities/CoachLinkSkill')
+const CoachLinkSkill = require('../entities/CoachLinkSkill')
 
 
 const dataSource = new DataSource({
@@ -24,7 +24,7 @@ const dataSource = new DataSource({
     CreditPackage,
     CreditPurchase,
     CoachSkill,
-    CoachSLinkSkill,
+    CoachLinkSkill,
     Coach,
     Course,
     CourseBooking,

@@ -25,6 +25,8 @@ const auth = userAuth({
   logger,
 });
 
+// 取得教練自己的個人資料
+router.get("/",auth, adminCoach.get)
 
 // 新增使用者為教練
 router.post(
@@ -33,7 +35,6 @@ router.post(
   [createCoachValidate,isCreateCoachAlreadyExist],
   adminCoach.post
 );
-
 
 
 
