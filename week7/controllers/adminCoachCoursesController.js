@@ -8,8 +8,6 @@ const {
 const CourseBooking = require("../entities/CourseBooking");
 
 const adminCoachCourses = {
-  getAllCourses: catchAsync(),
-  getCoursesById: catchAsync(),
   postCourse: catchAsync(async (req, res, next) => {
     const {
       user_id,
@@ -115,6 +113,31 @@ const adminCoachCourses = {
       .getRawMany();
     successResponse(res, courseLists, 200);
   }),
+  getCoachCourseById: catchAsync(async(req,res,next) => {
+    // 教練個人所有課程資料 + 課程id
+    const userId = req.user.id; // 教練本身的userId
+    const courseId = req.params.courseId
+
+    const courseTable = dataSource.getRepository("Course");
+    const courseLists = await courseTable
+      .createQueryBuilder("course")
+      .innerJoin("course.user", "user")
+      .innerJoin("course.coachSkill","skill")
+      .where("user.id = :id", { id: userId })
+      .andWhere("course.id = :course_id", {course_id: courseId})
+      .select([
+        "course.id AS id",
+        "skill.name AS skill_name",
+        "course.name AS name",
+        "course.description AS description",
+        "course.start_at AS start_at",
+        "course.end_at AS end_at",
+        "course.max_participants AS max_participants",
+      ])
+      .getRawMany();
+    successResponse(res, courseLists, 200);
+
+  })
 };
 
 module.exports = {

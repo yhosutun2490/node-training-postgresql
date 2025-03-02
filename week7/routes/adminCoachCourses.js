@@ -7,14 +7,17 @@ const {
   updateCourseValidate,
 } = require("../middlewares/admin/validateAdmin");
 const {
+  getCoachCourseByIdValidate,
+} = require("../middlewares/adminCourse/validateAdminCourse");
+const {
   isCoach,
   isCourseExist,
   isSkillExist,
 } = require("../middlewares/admin/index");
 
 const {
-  adminCoachCourses
-} = require("../controllers/adminCoachCoursesController")
+  adminCoachCourses,
+} = require("../controllers/adminCoachCoursesController");
 
 const config = require("../config/index");
 const { userAuth } = require("../middlewares/auth");
@@ -25,23 +28,29 @@ const auth = userAuth({
   logger,
 });
 
+// 根據課程id取得教練課程詳細資料
+router.get(
+  "/:courseId",
+  auth,
+  [isCoach, getCoachCourseByIdValidate],
+  adminCoachCourses.getCoachCourseById
+);
+
 // 取得教練個人的所有課程
-router.get("/",auth,isCoach,adminCoachCourses.getCoachCourse)
+router.get("/", auth, isCoach, adminCoachCourses.getCoachCourse);
 
 // 新增教練課程
 router.post(
   "/",
-  [auth, createCoursesValidate,isCoach, isSkillExist],
+  [auth, createCoursesValidate, isCoach, isSkillExist],
   adminCoachCourses.postCourse
 );
 
 // 更新教練課程
 router.put(
   "/:courseId",
-  [auth, updateCourseValidate,isCoach, isCourseExist, isSkillExist],
- adminCoachCourses.putCourse
+  [auth, updateCourseValidate, isCoach, isCourseExist, isSkillExist],
+  adminCoachCourses.putCourse
 );
-
-
 
 module.exports = router;
