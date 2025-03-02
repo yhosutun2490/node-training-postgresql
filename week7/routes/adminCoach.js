@@ -4,9 +4,11 @@ const { dataSource } = require("../db/data-source");
 const logger = require("../utils/logger")("AdminCoach");
 const {
   createCoachValidate,
+  updateCoachValidate
 } = require("../middlewares/admin/validateAdmin");
 
 const {
+  isCoach,
   isCreateCoachAlreadyExist,
 } = require("../middlewares/admin/index");
 
@@ -18,7 +20,7 @@ const {
 
 const config = require("../config/index");
 const { userAuth } = require("../middlewares/auth");
-const { AuthMechanism } = require("typeorm");
+
 // userAuth init
 const auth = userAuth({
   secret: config.get("secret").jwtSecret,
@@ -39,6 +41,9 @@ router.post(
   [createCoachValidate,isCreateCoachAlreadyExist],
   adminCoach.post
 );
+
+// 更新教練資料
+router.put("/",auth,[updateCoachValidate,isCoach],adminCoach.put)
 
 
 

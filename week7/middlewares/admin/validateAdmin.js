@@ -36,6 +36,35 @@ function createCoachValidate(req, res, next) {
   delete req.body.user_id
 }
 
+function updateCoachValidate(req, res, next) {
+  const rules = z.object({
+    experience_years: z
+      .number({
+        required_error: "experience_years不能為空",
+        invalid_type_error: "experience_years必須是數字",
+      })
+      .min(0, "experience_years不能為負數"),
+    description: z
+      .string({
+        invalid_type_error: "description必須是字串",
+        required_error: "description不能為空",
+      })
+      .nonempty("description不能為空"),
+    profile_image_url: z
+        .string({
+        invalid_type_error: "profile_image_url必須是字串",
+        required_error: "profile_image_url不能為空",
+      }).url()
+      .nonempty("profile_image_url不能為空"),
+    skill_ids: z
+    .array(z.string().uuid("每個 skill_id 必須是有效的 UUID")) // 檢查陣列內部元素是否為 UUID
+    .nonempty("skill_ids 不能為空") // 確保陣列不能為空
+  });
+  req.body = {...req.body,user_id: req.params.userId}
+  validateRequest(rules)(req, res, next)
+  delete req.body.user_id
+}
+
 function createCoursesValidate(req, res, next) {
   const rules = z.object({
     user_id: z
@@ -124,6 +153,7 @@ function updateCourseValidate(req, res, next) {
 
 module.exports = {
   createCoachValidate,
+  updateCoachValidate,
   createCoursesValidate,
   updateCourseValidate,
 };
