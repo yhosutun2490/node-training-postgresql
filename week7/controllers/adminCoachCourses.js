@@ -95,7 +95,7 @@ const adminCoachCourses = {
         "CourseBooking",
         "booking",
         "course.id = booking.course_id AND booking.cancelled_at IS NULL"
-      ) // cousres id -> booking table
+      ) // course id -> booking table
       .select([
         "course.id AS id",
         "course.name AS name",
@@ -109,7 +109,7 @@ const adminCoachCourses = {
         ELSE '已結束'
         END AS status`, // 自行和現在時間計算 判斷是否開課
       ])
-      .groupBy("course.id ,booking.id") // 同一課程
+      .groupBy("course.id") // 同一課程
       .getRawMany();
     successResponse(res, courseLists, 200);
   }),
