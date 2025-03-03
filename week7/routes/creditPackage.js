@@ -15,7 +15,7 @@ const auth = userAuth({
 const {
   isUserExitAndCoach,
   isPackageIdExist
-} = require("../middlewares//creditPackage/index")
+} = require("../middlewares/creditPackage/index")
 
 const {
   creditPackageValidator,
@@ -27,10 +27,10 @@ const {
   customErrorResponse,
 } = require("../middlewares/responseHandler");
 
-// 取得課程包資訊(教練後台)
-router.get("/", [auth, isUserExitAndCoach],async (req, res, next) => {
+// 取得課程包資訊(前台顯示)
+router.get("/", auth,async (req, res, next) => {
   try {
-    const data = await dataSource.getRepository("CREDIT_PACKAGE").find({
+    const data = await dataSource.getRepository("CreditPackage").find({
       select: ["id", "name", "credit_amount", "price"],
     });
     successResponse(res, data);

@@ -143,9 +143,11 @@ const revenue = {
         'COUNT(booking.user_id) AS participants',
         'SUM(up.price_per_course) AS revenue'
       ])
-      .groupBy('course.user_id')
+      .groupBy('course.user_id') // 教練本人id
       .getRawMany();
-    successResponse(res, result, 200);
+    successResponse(res, {
+      total: result[0]
+    }, 200);
   }),
 };
 
