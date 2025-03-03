@@ -97,7 +97,6 @@ const adminCoach = {
         skill_id: skillId,
       };
     });
-    console.log("skillData-------", skillData);
     const updateSkillRes = await skillLinkTable.upsert(skillData, {
       conflictPaths: ["coach_id", "skill_id"], // 設置複合唯一鍵，不重複插入
       skipUpdateIfNoValuesChanged: true,
@@ -109,22 +108,42 @@ const adminCoach = {
 const revenue = {
   get: catchAsync(async (req, res, next) => {
     const userId = req.user.id; // coach user id
+
+    // user purchase 單堂價格
+    // 先聚合成一筆(包括重複購買組合包) 避免多筆join重複計算
+    const userPurchasePriceQuery = await dataSource
+      .getRepository("CreditPurchase")
+      .createQueryBuilder("purchase")
+      .select("purchase.user_id", "user_id")
+      .addSelect(
+        "SUM(purchase.price_paid) / NULLIF(SUM(purchase.purchased_credits), 0)", 
+        "price_per_course"
+      )
+      .groupBy("purchase.user_id")
+      .getQuery();
+
     const result = await dataSource
-      .getRepository("User")
-      .createQueryBuilder("user")
-      .innerJoinAndSelect("Course", "course", "user.id = course.user_id")
+      .getRepository("Coach")
+      .createQueryBuilder("coach")
+      .innerJoinAndSelect("Course", "course", "coach.user_id = course.user_id")
       .innerJoinAndSelect(
         "CourseBooking",
         "booking",
         "booking.course_id = course.id"
       )
       .innerJoinAndSelect(
-        "CreditPurchase",
-        "purchase",
-        "purchase.user_id = booking.user_id"
+        `(${userPurchasePriceQuery})`,
+        "up",
+        "booking.user_id = up.user_id"
       )
-      .where("user.id = :userId", { userId: userId })
+      .where("coach.user_id = :userId", { userId: userId })
       .andWhere("booking.cancelled_at IS NULL")
+      .select([
+        'COUNT(booking.course_id) AS course_count',
+        'COUNT(booking.user_id) AS participants',
+        'SUM(up.price_per_course) AS revenue'
+      ])
+      .groupBy('course.user_id')
       .getRawMany();
     successResponse(res, result, 200);
   }),
