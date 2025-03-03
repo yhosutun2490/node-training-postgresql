@@ -16,7 +16,7 @@ const {
 
 const {
   coaches,
-} = require("../controllers/coachesController")
+} = require("../controllers/coaches")
 
 // 取得教練列表分頁
 router.get("/", checkPaginationParams, coaches.getCoachByPage)

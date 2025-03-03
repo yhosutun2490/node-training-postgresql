@@ -15,7 +15,7 @@ const {
 const {
   adminCoach,
   revenue
-} = require("../controllers/adminCoachController")
+} = require("../controllers/adminCoach")
 
 
 const config = require("../config/index");

@@ -24,7 +24,7 @@ const {
   password: passwordController,
   package,
   course
-} = require("../controllers/usersController");
+} = require("../controllers/users");
 
 const { userAuth } = require("../middlewares/auth");
 const config = require("../config/index");

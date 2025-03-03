@@ -15,7 +15,7 @@ const {
   isOverCourseMaxParticipants,
 } = require("../middlewares/courses/index");
 
-const { courses } = require("../controllers/coursesController")
+const { courses } = require("../controllers/courses")
 
 const config = require("../config/index");
 const { userAuth } = require("../middlewares/auth");

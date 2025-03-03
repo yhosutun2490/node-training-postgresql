@@ -17,7 +17,7 @@ const {
 
 const {
   adminCoachCourses,
-} = require("../controllers/adminCoachCoursesController");
+} = require("../controllers/adminCoachCourses");
 
 const config = require("../config/index");
 const { userAuth } = require("../middlewares/auth");

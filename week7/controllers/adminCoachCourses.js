@@ -90,26 +90,26 @@ const adminCoachCourses = {
     const courseLists = await courseTable
       .createQueryBuilder("course")
       .innerJoin("course.user", "user")
-      .where("user.id = :id", { id: userId })
-      .innerJoinAndSelect(
-        CourseBooking,
+      .where("user.id = :id", { id: userId }) // join 教練開的課程
+      .leftJoinAndSelect(
+        "CourseBooking",
         "booking",
         "course.id = booking.course_id AND booking.cancelled_at IS NULL"
-      )
+      ) // cousres id -> booking table
       .select([
         "course.id AS id",
         "course.name AS name",
         "course.max_participants AS max_participants",
         "course.start_at AS start_at",
         "course.end_at AS end_at",
-        "COUNT(*) AS participants", // 已註冊所有人數
+        "COUNT(booking.id) AS participants", // 已註冊所有人數
         `CASE 
         WHEN course.start_at > NOW() THEN '已開放報名'
         WHEN course.start_at <= NOW() AND course.end_at > NOW() THEN '開課中'
         ELSE '已結束'
         END AS status`, // 自行和現在時間計算 判斷是否開課
       ])
-      .groupBy("course.id") // 同一課程
+      .groupBy("course.id ,booking.id") // 同一課程
       .getRawMany();
     successResponse(res, courseLists, 200);
   }),

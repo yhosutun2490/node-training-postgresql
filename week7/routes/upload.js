@@ -14,7 +14,7 @@ const auth = userAuth({
 
 const {
     uploadFile
-} = require("../controllers/uploadController")
+} = require("../controllers/upload")
 
 
 // upload file 

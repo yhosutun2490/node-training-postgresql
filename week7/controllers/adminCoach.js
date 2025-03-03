@@ -107,7 +107,27 @@ const adminCoach = {
 };
 
 const revenue = {
-  get: catchAsync(async (req, res, next) => {}),
+  get: catchAsync(async (req, res, next) => {
+    const userId = req.user.id; // coach user id
+    const result = await dataSource
+      .getRepository("User")
+      .createQueryBuilder("user")
+      .innerJoinAndSelect("Course", "course", "user.id = course.user_id")
+      .innerJoinAndSelect(
+        "CourseBooking",
+        "booking",
+        "booking.course_id = course.id"
+      )
+      .innerJoinAndSelect(
+        "CreditPurchase",
+        "purchase",
+        "purchase.user_id = booking.user_id"
+      )
+      .where("user.id = :userId", { userId: userId })
+      .andWhere("booking.cancelled_at IS NULL")
+      .getRawMany();
+    successResponse(res, result, 200);
+  }),
 };
 
 module.exports = {

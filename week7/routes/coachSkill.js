@@ -10,7 +10,7 @@ const {
 } = require("../middlewares/coachSkill/index")
 const {
   coachSkill
-} = require("../controllers/coachSkillController")
+} = require("../controllers/coachSkill")
 
 
 router.get("/", coachSkill.get);
