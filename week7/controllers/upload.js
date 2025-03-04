@@ -6,7 +6,6 @@ const {
   customErrorResponse,
 } = require("../middlewares/responseHandler");
 const config = require("../config/index");
-const formidable = require("formidable");
 const firebaseAdmin = require("firebase-admin");
 
 firebaseAdmin.initializeApp({
@@ -15,11 +14,7 @@ firebaseAdmin.initializeApp({
   ),
   storageBucket: config.get("secret.firebase.storageBucket"),
 });
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
-const ALLOWED_FILE_TYPES = {
-  "image/jpeg": true,
-  "image/png": true,
-};
+
 const bucket = firebaseAdmin.storage().bucket();
 const uploadFile = {
   post: catchAsync(async (req, res, next) => {
