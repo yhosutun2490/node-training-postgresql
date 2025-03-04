@@ -33,10 +33,10 @@ const auth = userAuth({
 });
 
 // 取得教練自己的個人資料
-router.get("/",auth, adminCoach.get)
+router.get("/",auth, isCoach,adminCoach.get)
 
 // 取得教練個人營收資料(月份)
-router.get("/revenue",auth, [validateMonthQuery],revenue.get)
+router.get("/revenue",auth, [validateMonthQuery,isCoach],revenue.get)
 
 // 新增使用者為教練
 router.post(
