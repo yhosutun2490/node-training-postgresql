@@ -23,14 +23,7 @@ const ALLOWED_FILE_TYPES = {
 const bucket = firebaseAdmin.storage().bucket();
 const uploadFile = {
   post: catchAsync(async (req, res, next) => {
-    // form data parser
-    const form = formidable.formidable({
-      multiple: false,
-      maxFileSize: MAX_FILE_SIZE,
-      filter: ({ mimetype }) => {
-        return !!ALLOWED_FILE_TYPES[mimetype];
-      },
-    });
+    
     const [fields, files] = await form.parse(req);
     logger.info("files");
     logger.info(files);

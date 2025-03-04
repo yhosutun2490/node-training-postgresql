@@ -42,7 +42,7 @@ router.get("/", auth, isCoach, adminCoachCourses.getCoachCourse);
 // 新增教練課程
 router.post(
   "/",
-  [auth, createCoursesValidate, isCoach, isSkillExist],
+  auth, [createCoursesValidate, isCoach, isSkillExist],
   adminCoachCourses.postCourse
 );
 

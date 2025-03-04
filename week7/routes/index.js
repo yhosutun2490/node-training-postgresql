@@ -10,7 +10,7 @@ const userAdminCoachRoute = require('./adminCoach')
 const userAdminCoachCourseRoute = require('./adminCoachCourses')
 const coachesRoute = require('./coaches')
 const coursesRoute = require('./courses')
-// const uploadRoute = require('./upload')
+const uploadRoute = require('./upload')
 
 // 總路由器 
 router.use('/api/credit-package',creditPackageRoute)
@@ -20,6 +20,6 @@ router.use('/api/admin/coaches/courses',userAdminCoachCourseRoute)
 router.use('/api/admin/coaches',userAdminCoachRoute)
 router.use('/api/coaches',coachesRoute)
 router.use('/api/courses',coursesRoute)
-// router.use('/api/upload',uploadRoute)
+router.use('/api/upload',uploadRoute)
 
 module.exports = router
