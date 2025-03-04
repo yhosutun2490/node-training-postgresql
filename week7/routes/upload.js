@@ -13,7 +13,7 @@ const auth = userAuth({
 });
 const {
   uploadFileIsValid
-} = require("../middlewares/upload")
+} = require("../middlewares/upload/index")
 
 const {
     uploadFile
