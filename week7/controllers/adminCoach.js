@@ -108,6 +108,7 @@ const adminCoach = {
 const revenue = {
   get: catchAsync(async (req, res, next) => {
     const userId = req.user.id; // coach user id
+    const { startDate , endDate } = req.monthRange // query months
 
     // user purchase 單堂價格
     // 先聚合成一筆(包括重複購買組合包) 避免多筆join重複計算
@@ -138,6 +139,11 @@ const revenue = {
       )
       .where("coach.user_id = :userId", { userId: userId })
       .andWhere("booking.cancelled_at IS NULL")
+      .andWhere("course.start_at > :startDate AND course.end_at < :endDate",{
+        startDate: new Date(startDate),
+        endDate: new Date(endDate)
+      }) // months query 
+      .andWhere("course.end_at < Now()") // 已開課(上課時間結束)
       .select([
         'COUNT(booking.course_id) AS course_count',
         'COUNT(booking.user_id) AS participants',

@@ -13,6 +13,10 @@ const {
 } = require("../middlewares/admin/index");
 
 const {
+  validateMonthQuery
+} = require("../middlewares/quertMonth")
+
+const {
   adminCoach,
   revenue
 } = require("../controllers/adminCoach")
@@ -32,7 +36,7 @@ const auth = userAuth({
 router.get("/",auth, adminCoach.get)
 
 // 取得教練個人營收資料(月份)
-router.get("/revenue",auth,revenue.get)
+router.get("/revenue",auth, [validateMonthQuery],revenue.get)
 
 // 新增使用者為教練
 router.post(
