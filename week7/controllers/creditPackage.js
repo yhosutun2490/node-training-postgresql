@@ -13,9 +13,67 @@ const creditPackage = {
     });
     successResponse(res, data);
   }),
-  createPackage: catchAsync(),
-  buyPackage: catchAsync(),
-  delete: catchAsync(),
+  createPackage: catchAsync(
+    async (req, res, next) => {
+      // 檢核 body
+      const bodyData = req.body;
+
+      // get datasource insert
+      const { name, credit_amount, price } = bodyData;
+      const packageTable = await dataSource.getRepository("CREDIT_PACKAGE");
+
+      // 檢核package 名稱
+      const hasSamePackageName = await packageTable.findOne({
+        where: { name },
+      });
+
+      if (!hasSamePackageName) {
+        const result = await packageTable.insert({
+          name: name,
+          credit_amount: credit_amount,
+          price: price,
+        });
+        const createId = result.identifiers[0]?.id;
+        successResponse(res, {
+          id: createId,
+          name,
+        });
+      } else {
+        customErrorResponse(res, 409, '資料重複')
+      }
+
+    }
+  ),
+  buyPackage: catchAsync(async (req, res, next) => {
+    const userId = req.user.id
+    const packageData = req.package // isPackageIdExist middleware 檢查後傳出
+    const purchaseTable = dataSource.getRepository('CreditPurchase')
+    const newPurchase = await purchaseTable.create({
+      user_id: userId,
+      credit_package_id: packageData.id,
+      purchased_credits: packageData.credit_amount,
+      price_paid: packageData.price,
+      purchaseAt: new Date().toISOString()
+    })
+    await purchaseTable.save(newPurchase)
+    successResponse(res, null, 200)
+  }),
+  delete: catchAsync(async (req, res, next) => {
+
+    const targetId = req.params?.id;
+    // id 格式檢核
+    const packageTable = await dataSource.getRepository("CREDIT_PACKAGE");
+    const result = await packageTable.delete({
+      id: targetId,
+    });
+
+    if (result.affected) {
+      successResponse(res, result);
+      return
+    } else {
+      customErrorResponse(res, 400, "ID錯誤");
+    }
+  }),
 };
 
 module.exports = {
